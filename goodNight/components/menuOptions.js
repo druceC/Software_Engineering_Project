@@ -3,7 +3,7 @@ import {StyleSheet, Text, TouchableOpacity} from 'react-native';
 
 export default function MenuOptions({item, pressHandler}){
     return (
-        <TouchableOpacity onPress={() => pressHandler(item.text)}>
+        <TouchableOpacity onPress={() => pressHandler(item.navigate)}>
             <Text style={styles.item}>{item.text}</Text>
         </TouchableOpacity>
     );
