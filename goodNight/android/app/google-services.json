@@ -1,0 +1,31 @@
+{
+  "project_info": {
+    "project_number": "506276774022",
+    "firebase_url": "https://goodnight-23bd4-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "goodnight-23bd4",
+    "storage_bucket": "goodnight-23bd4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:506276774022:android:229cf128b2a06b15b65107",
+        "android_client_info": {
+          "package_name": "com.segroup77.goodN"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDat4mEjt-U4cRBLq-6yKr7hew7dugwCU8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
+
