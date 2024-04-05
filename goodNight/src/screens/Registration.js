@@ -45,7 +45,7 @@ export const Register= () =>{
                 <View>
                     <TextInput
                         placeholder='Name'
-                        valu={name}
+                        value={name}
                         onChangeText={setName}
                     />
                     <TextInput

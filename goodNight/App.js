@@ -18,7 +18,7 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen name="Good Night!" component={HomeScreen} />
+        <Stack.Screen name="Good Night Andy Version 😈" component={HomeScreen} />
         <Stack.Screen name="therapySessionMenu" component={TherapySessionMenu} />
         <Stack.Screen name="locateTherapistMenu" component={LocateTherapistMenu} />
         <Stack.Screen name="sleepTrackMenu" component={SleepTrackMenu} />
