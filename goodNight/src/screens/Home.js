@@ -1,5 +1,10 @@
 import React, {useState} from 'react';
-import { StyleSheet, Text, View, FlatList, TouchableOpacity} from 'react-native';
+import { StyleSheet, View, FlatList, TouchableOpacity} from 'react-native';
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
+import { CommonActions } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Text, BottomNavigation } from 'react-native-paper';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 function MenuOptions({item, pressHandler}){
     return (
@@ -9,16 +14,19 @@ function MenuOptions({item, pressHandler}){
     );
 }
 
+
+const Tab = createBottomTabNavigator();
+
 // Screen detailer for Home Screen
 // Contains the navigation menus for three different functionalities of the app
 
-export const HomeScreen = ({navigation}) => {
+export const TestScreen = ({navigation}) => {
     const [menuOptions, setMenus] = useState([
       {text: "CBT-i Therapy Session", key: "1", navigate: "therapySessionMenu"},
       {text: "Locate Nearby Therapist", key: "2", navigate: "locateTherapistMenu"},
       {text: "Sleep Track", key: "3", navigate: "sleepTrackMenu"},
       {text: "test login", key: "4", navigate: "testLogin"},
-      {text: "test Registration", key: "5", navigate: "testRegis",}
+      {text: "test Registration", key: "5", navigate: "testRegis",},
     ]);
     
     // By pressing the menu, user navigates to the corresponding screen
@@ -38,26 +46,11 @@ export const HomeScreen = ({navigation}) => {
           />
         </View>
       </View>
+      
+      
     )
   }
 
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        padding: 40,
-    },
-    list: {
-        marginTop:20,
-    },
-    item: {
-        padding: 16,
-        marginTop: 16, 
-        borderWidth: 1,
-        borderStyle: 'dashed',
-        borderRadius: 20,
-    }
-})
+const styles = require('../../style');
 
 

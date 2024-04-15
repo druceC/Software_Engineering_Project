@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { StyleSheet, Text, View, FlatList } from 'react-native';
+import { StyleSheet, View, FlatList } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { TherapySessionMenu } from './src/screens/TherapySessionMenu';
@@ -8,6 +8,8 @@ import { SleepTrackMenu } from './src/screens/SleepTrack';
 import { HomeScreen} from './src/screens/Home';
 import { Login } from './src/screens/Login';
 import { Register } from './src/screens/Registration';
+import { MainPage } from './src/screens/Main';
+import { Text, BottomNavigation } from 'react-native-paper';
 
 const Stack = createNativeStackNavigator();
 
@@ -18,7 +20,7 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen name="Good Night Andy Version 😈" component={HomeScreen} />
+        <Stack.Screen name="Good Night Andy New Version 😈" component={MainPage} />
         <Stack.Screen name="therapySessionMenu" component={TherapySessionMenu} />
         <Stack.Screen name="locateTherapistMenu" component={LocateTherapistMenu} />
         <Stack.Screen name="sleepTrackMenu" component={SleepTrackMenu} />
@@ -30,18 +32,4 @@ export default function App() {
 }
 
 // Stylesheet for the app -> (Andy)
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    padding: 40,
-  },
-  list: {
-    marginTop:20,
-  },
-  menuOption:{ 
-    flex: 1, 
-    alignItems: 'center', 
-    justifyContent: 'center' 
-  }
-});
+const styles = require('./style');
