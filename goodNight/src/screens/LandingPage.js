@@ -5,21 +5,28 @@ import { CommonActions } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Text, BottomNavigation } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { TestScreen } from './Home';
+import { TestScreen } from './TestingScreen';
+import { HomeScreen } from './HomeScreen';
+import { SettingsScreen } from './SettingsScreen';
 
 
 const Tab = createBottomTabNavigator();
 
-export const MainPage = () =>{
+export const LandingPage = () =>{
+
   return(
     <Tab.Navigator
+    //initialize the Tab Navigator
     screenOptions={{
-      headerShown: false,
+      headerShown: false, //Hide the header in the page
     }}
+
+    //Tab Bar for the Bottom Navigation 
+    //NO NEED TO TOUCH THIS
     tabBar={({ navigation, state, descriptors, insets }) => (
       <BottomNavigation.Bar
         navigationState={state}
-       safeAreaInsets={insets}
+        safeAreaInsets={insets}
         onTabPress={({ route, preventDefault }) => {
           const event = navigation.emit({
             type: 'tabPress',
@@ -30,12 +37,13 @@ export const MainPage = () =>{
           if (event.defaultPrevented) {
             preventDefault();
           } else {
-           navigation.dispatch({
+            navigation.dispatch({
               ...CommonActions.navigate(route.name, route.params),
               target: state.key,
             });
           }
         }}
+        
         renderIcon={({ route, focused, color }) => {
           const { options } = descriptors[route.key];
           if (options.tabBarIcon) {
@@ -58,7 +66,9 @@ export const MainPage = () =>{
       />
     )}
   >
+
     <Tab.Screen
+    // Home Screen Tab Content
       name="Home"
       component={HomeScreen}
       options={{
@@ -68,7 +78,10 @@ export const MainPage = () =>{
         },
       }}
     />
+
+
     <Tab.Screen
+    // Settings Screen Tab Content
       name="Settings"
       component={SettingsScreen}
       options={{
@@ -78,7 +91,10 @@ export const MainPage = () =>{
         },
       }}
     />
+
+
     <Tab.Screen
+    // Testing Screen Tab Content
       name="Testing"
       component={TestScreen}
       options={{
@@ -88,24 +104,10 @@ export const MainPage = () =>{
         },
       }}
     />
+    
+
   </Tab.Navigator>
   )
-}
-
-function HomeScreen() {
-  return (
-    <View style={styles.container}>
-      <Text variant="headlineMedium">HomeScreen</Text>
-    </View>
-  );
-}
-
-function SettingsScreen() {
-  return (
-    <View style={styles.container}>
-      <Text variant="headlineMedium">Settings!</Text>
-    </View>
-  );
 }
 
 

@@ -2,9 +2,9 @@ import React, {useState} from 'react';
 import { StyleSheet, View, FlatList, TouchableOpacity} from 'react-native';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { CommonActions } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Text, BottomNavigation } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+
 
 function MenuOptions({item, pressHandler}){
     return (
@@ -13,9 +13,6 @@ function MenuOptions({item, pressHandler}){
         </TouchableOpacity>
     );
 }
-
-
-const Tab = createBottomTabNavigator();
 
 // Screen detailer for Home Screen
 // Contains the navigation menus for three different functionalities of the app
@@ -34,7 +31,6 @@ export const TestScreen = ({navigation}) => {
       navigation.navigate(key)
     }
     return(
-  
       // Component for Home Screen: lists different menus
       <View style={styles.container}>
         <View style={styles.list}>

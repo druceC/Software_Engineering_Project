@@ -5,23 +5,40 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { TherapySessionMenu } from './src/screens/TherapySessionMenu';
 import { LocateTherapistMenu } from './src/screens/LocateNearbyTherapist';
 import { SleepTrackMenu } from './src/screens/SleepTrack';
-import { HomeScreen} from './src/screens/Home';
+import { HomeScreen} from './src/screens/TestingScreen';
 import { Login } from './src/screens/Login';
 import { Register } from './src/screens/Registration';
-import { MainPage } from './src/screens/Main';
+import { LandingPage } from './src/screens/LandingPage';
 import { Text, BottomNavigation } from 'react-native-paper';
 
 const Stack = createNativeStackNavigator();
 
 // Function for Whats going to be shown on screen
 export default function App() {
-  
+
+
 // List of different Screens for the app
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen name="Good Night Andy New Version 😈" component={MainPage} />
-        <Stack.Screen name="therapySessionMenu" component={TherapySessionMenu} />
+      <Stack.Navigator initialRouteName="Home Page"
+        screenOptions={{
+          headerMode: 'screen',
+        }}
+      >
+        
+        <Stack.Screen 
+          name="Good Night Home Page 🌃" 
+          component={LandingPage} 
+          screenOptions={{
+            headerShown: false,
+          }}
+        // Andy: Here I changed screen reference to the "LandingPage" in the screens/LandingPage.js
+          /> 
+
+        <Stack.Screen 
+          name="therapySessionMenu" 
+          component={TherapySessionMenu} 
+          />
         <Stack.Screen name="locateTherapistMenu" component={LocateTherapistMenu} />
         <Stack.Screen name="sleepTrackMenu" component={SleepTrackMenu} />
         <Stack.Screen name="testLogin" component={Login} />
