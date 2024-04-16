@@ -24,6 +24,7 @@ export const TestScreen = ({navigation}) => {
       {text: "Sleep Track", key: "3", navigate: "sleepTrackMenu"},
       {text: "test login", key: "4", navigate: "testLogin"},
       {text: "test Registration", key: "5", navigate: "testRegis",},
+      {text: "blank Page", key: "6", navigate: "blankPage",},
     ]);
     
     // By pressing the menu, user navigates to the corresponding screen

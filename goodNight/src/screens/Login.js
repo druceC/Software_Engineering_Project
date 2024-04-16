@@ -1,22 +1,21 @@
 import React, {useState} from 'react';
-import { StyleSheet, Text, View, TextInput, SafeAreaView, Keyboard, Pressable, TouchableOpacity, Alert} from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, Keyboard, Pressable, TouchableOpacity, Alert, Image, TouchableHighlight} from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 import auth from '@react-native-firebase/auth';
+import { Icon, TextInput } from 'react-native-paper';
+import { Button } from 'react-native';
+import { Button as PaperButton } from 'react-native-paper';
 
-const Button = ({onPress, title}) =>{
-    return(
-        <TouchableOpacity onPress={onPress}>
-            <Text>{title}</Text>
-        </TouchableOpacity> 
-    );
-};
+
+
 
 export const Login= () =>{
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const [email, setEmail] = React.useState("");
+    const [password, setPassword] = React.useState("");
+    const [isPasswordVisible, setIsPasswordVisible] = useState(true);
 
     const nav = useNavigation();
-
+    
     const register = () =>{
         nav.push("Register");
     }
@@ -34,27 +33,69 @@ export const Login= () =>{
         }
     }
 
+    const handleIconPress = () => {
+        // Toggle the state for password visibility
+        setIsPasswordVisible(!isPasswordVisible);
+    };
+
     return(
         <Pressable onPress={Keyboard.dismiss}>
             <SafeAreaView>
-                <View>
+                <View style={styles.loginHeader}>
+                    <Image
+                        source={require('../images/ghost.png')} // Local image
+                        style={styles.loginLogo}
+                        borderRadius={25}
+                    />
+                </View>
+                <View style={styles.loginInputBox}>
                     <TextInput
-                        placeholder='Email'
+                        style={styles.loginTextInput}
+                        mode = 'outlined'
+                        label='Email'
                         value={email}
                         onChangeText={setEmail}
                         inputMode='email'
                     />
                     <TextInput
-                        placeholder='Password'
+                        style={styles.loginTextInput}
+                        mode = 'outlined'
+                        label='Password'
                         value={password}
                         onChangeText={setPassword}
-                        secureTextEntry
+                        secureTextEntry={isPasswordVisible} // Use state to control visibility
+                        right={
+                            <TextInput.Icon
+                                icon={isPasswordVisible ? "eye" : "eye-off"}
+                                onPress={handleIconPress}
+                            />
+                        }
                     />
                 </View>
-                <Button onPress={loginSuccess} title="Login"/>
-                <Button onPress={register} title="Register"/>
+                    <PaperButton
+                        style={styles.registerButton}
+                        mode="contained-tonal" 
+                        icon="pencil"
+                        onPress={register}
+                        compact={true}>
+                        Register
+                    </PaperButton>
+
+                    <PaperButton
+                        style={styles.loginButton}
+                        contentStyle={styles.loginButtonContent}
+                        icon="arrow-right-thick"
+                        mode="contained"
+                        onPress={loginSuccess}
+                        borderRadius={25}
+                        compact={true}>
+                            Login
+                    </PaperButton>
             </SafeAreaView>
         </Pressable>
     )
 }
 
+const styles = require('../../style');
+
+export default Login;

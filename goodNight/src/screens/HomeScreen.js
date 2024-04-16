@@ -18,4 +18,4 @@ export const HomeScreen = () =>{
   }
 
 
-  const styles = require('../../style');
+const styles = require('../../style');

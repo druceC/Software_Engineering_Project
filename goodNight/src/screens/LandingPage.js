@@ -8,6 +8,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { TestScreen } from './TestingScreen';
 import { HomeScreen } from './HomeScreen';
 import { SettingsScreen } from './SettingsScreen';
+import { Login } from './Login'
 
 
 const Tab = createBottomTabNavigator();
@@ -22,6 +23,7 @@ export const LandingPage = () =>{
     }}
 
     //Tab Bar for the Bottom Navigation 
+
     //NO NEED TO TOUCH THIS
     tabBar={({ navigation, state, descriptors, insets }) => (
       <BottomNavigation.Bar
@@ -74,7 +76,7 @@ export const LandingPage = () =>{
       options={{
         tabBarLabel: 'Home',
         tabBarIcon: ({ color, size }) => {
-          return <Icon name="home" size={size} color={color} />;
+          return <Icon name="power-sleep" size={size} color={color} />;
         },
       }}
     />
@@ -85,9 +87,9 @@ export const LandingPage = () =>{
       name="Settings"
       component={SettingsScreen}
       options={{
-        tabBarLabel: 'Settings',
+        tabBarLabel: 'Settings',// Tab Name
         tabBarIcon: ({ color, size }) => {
-          return <Icon name="cog" size={size} color={color} />;
+          return <Icon name="cog" size={size} color={color} />;// Tab icon
         },
       }}
     />
@@ -98,9 +100,21 @@ export const LandingPage = () =>{
       name="Testing"
       component={TestScreen}
       options={{
-        tabBarLabel: 'Testing',
+        tabBarLabel: 'Testing',// Tab Name
         tabBarIcon: ({ color, size }) => {
-          return <Icon name="test-tube" size={size} color={color} />;
+          return <Icon name="test-tube" size={size} color={color} />;// Tab icon
+        },
+      }}
+    />
+
+    <Tab.Screen
+    // Testing Screen Tab Content
+      name="My Profile"
+      component={Login}
+      options={{
+        tabBarLabel: 'My Profile',// Tab Name
+        tabBarIcon: ({ color, size }) => {
+          return <Icon name="account-circle" size={size} color={color} />;// Tab icon
         },
       }}
     />

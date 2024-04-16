@@ -1,5 +1,7 @@
 'use strict';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View, Dimensions} from 'react-native';
+
+const windowWidth = Dimensions.get('window').width; // Get the width of the device window
 
 module.exports = StyleSheet.create({
     menuOption:{ 
@@ -21,5 +23,33 @@ module.exports = StyleSheet.create({
         borderWidth: 1,
         borderStyle: 'dashed',
         borderRadius: 20,
-    }
+    },
+    loginLogo: {
+        marginTop: '10%',
+        left: '35%',
+        width: '30%',
+        height: windowWidth * 0.3,
+    },
+    loginHeader: {
+        marginTop: '10%',
+    },
+    loginInputBox: {
+        marginTop: '5%',
+        left: '7.5%',
+        width: '85%',
+    },
+    loginTextInput: {
+        marginTop: '1%',
+    },
+    loginButton: {
+        marginTop: '1%',
+        width: '90%',
+        left: '5%',
+    },
+    registerButton: {
+        marginTop: '10%',
+        width: '90%',
+        left: '5%',
+        textDecorationLine: 'underline',
+    },
 });

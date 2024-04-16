@@ -9,6 +9,7 @@ import { HomeScreen} from './src/screens/TestingScreen';
 import { Login } from './src/screens/Login';
 import { Register } from './src/screens/Registration';
 import { LandingPage } from './src/screens/LandingPage';
+import { BlankPage } from './src/screens/BlankPage';
 import { Text, BottomNavigation } from 'react-native-paper';
 
 const Stack = createNativeStackNavigator();
@@ -23,6 +24,7 @@ export default function App() {
       <Stack.Navigator initialRouteName="Home Page"
         screenOptions={{
           headerMode: 'screen',
+          headerShown: false,
         }}
       >
         
@@ -35,14 +37,12 @@ export default function App() {
         // Andy: Here I changed screen reference to the "LandingPage" in the screens/LandingPage.js
           /> 
 
-        <Stack.Screen 
-          name="therapySessionMenu" 
-          component={TherapySessionMenu} 
-          />
+        <Stack.Screen name="therapySessionMenu" component={TherapySessionMenu} />
         <Stack.Screen name="locateTherapistMenu" component={LocateTherapistMenu} />
         <Stack.Screen name="sleepTrackMenu" component={SleepTrackMenu} />
         <Stack.Screen name="testLogin" component={Login} />
         <Stack.Screen name="testRegis" component={Register} />
+        <Stack.Screen name="blankPage" component={BlankPage} />
       </Stack.Navigator>
     </NavigationContainer>
   );
