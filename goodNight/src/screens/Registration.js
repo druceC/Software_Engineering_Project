@@ -1,31 +1,31 @@
-import React, {useState} from 'react';
-import { StyleSheet, Text, View, TextInput, SafeAreaView, Keyboard, Pressable, TouchableOpacity, Alert} from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, TextInput, SafeAreaView, Keyboard, Pressable, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 import auth from '@react-native-firebase/auth';
 import db from "@react-native-firebase/database";
 
-const Button = ({onPress, title}) =>{
-    return(
+const Button = ({ onPress, title }) => {
+    return (
         <TouchableOpacity onPress={onPress}>
             <Text>{title}</Text>
-        </TouchableOpacity> 
+        </TouchableOpacity>
     );
 };
 
-export const Register= () =>{
+export const Register = () => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
     const nav = useNavigation();
 
-    const createProfile = async (response) =>{
-        db().ref(`/users/${response.user.uid}`).set({name});
+    const createProfile = async (response) => {
+        db().ref(`/users/${response.user.uid}`).set({ name });
     };
 
-    const registerImmediately = async () =>{
-        if(email && password){
-            try{
+    const registerImmediately = async () => {
+        if (email && password) {
+            try {
                 const response = await auth().signInWithEmailAndPassword(email, password);
 
                 if (response.user) {
@@ -33,13 +33,13 @@ export const Register= () =>{
                     nav.replace("Home");
                 }
             }
-            catch(error){
+            catch (error) {
                 Alert.alert('Error', error.message);
             }
         }
     }
 
-    return(
+    return (
         <Pressable onPress={Keyboard.dismiss}>
             <SafeAreaView>
                 <View>
@@ -61,7 +61,7 @@ export const Register= () =>{
                         secureTextEntry
                     />
                 </View>
-                <Button onPress={registerImmediately} title="Register"/>
+                <Button onPress={registerImmediately} title="Register" />
             </SafeAreaView>
         </Pressable>
     )

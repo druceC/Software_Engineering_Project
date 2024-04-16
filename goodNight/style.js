@@ -1,13 +1,13 @@
 'use strict';
-import {StyleSheet, Text, View, Dimensions} from 'react-native';
+import { StyleSheet, Text, View, Dimensions } from 'react-native';
 
 const windowWidth = Dimensions.get('window').width; // Get the width of the device window
 
 module.exports = StyleSheet.create({
-    menuOption:{ 
-        flex: 1, 
-        alignItems: 'center', 
-        justifyContent: 'center' 
+    menuOption: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     container: {
         flex: 1,
@@ -15,11 +15,11 @@ module.exports = StyleSheet.create({
         padding: 40,
     },
     list: {
-        marginTop:20,
+        marginTop: 20,
     },
     item: {
         padding: 16,
-        marginTop: 16, 
+        marginTop: 16,
         borderWidth: 1,
         borderStyle: 'dashed',
         borderRadius: 20,

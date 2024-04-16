@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { CommonActions } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -13,114 +13,114 @@ import { Login } from './Login'
 
 const Tab = createBottomTabNavigator();
 
-export const LandingPage = () =>{
+export const LandingPage = () => {
 
-  return(
+  return (
     <Tab.Navigator
-    //initialize the Tab Navigator
-    screenOptions={{
-      headerShown: false, //Hide the header in the page
-    }}
+      //initialize the Tab Navigator
+      screenOptions={{
+        headerShown: false, //Hide the header in the page
+      }}
 
-    //Tab Bar for the Bottom Navigation 
+      //Tab Bar for the Bottom Navigation 
 
-    //NO NEED TO TOUCH THIS
-    tabBar={({ navigation, state, descriptors, insets }) => (
-      <BottomNavigation.Bar
-        navigationState={state}
-        safeAreaInsets={insets}
-        onTabPress={({ route, preventDefault }) => {
-          const event = navigation.emit({
-            type: 'tabPress',
-            target: route.key,
-            canPreventDefault: true,
-          });
-
-          if (event.defaultPrevented) {
-            preventDefault();
-          } else {
-            navigation.dispatch({
-              ...CommonActions.navigate(route.name, route.params),
-              target: state.key,
+      //NO NEED TO TOUCH THIS
+      tabBar={({ navigation, state, descriptors, insets }) => (
+        <BottomNavigation.Bar
+          navigationState={state}
+          safeAreaInsets={insets}
+          onTabPress={({ route, preventDefault }) => {
+            const event = navigation.emit({
+              type: 'tabPress',
+              target: route.key,
+              canPreventDefault: true,
             });
-          }
-        }}
-        
-        renderIcon={({ route, focused, color }) => {
-          const { options } = descriptors[route.key];
-          if (options.tabBarIcon) {
-            return options.tabBarIcon({ focused, color, size: 24 });
-          }
 
-          return null;
-        }}
-        getLabelText={({ route }) => {
-          const { options } = descriptors[route.key];
-          const label =
-            options.tabBarLabel !== undefined
-              ? options.tabBarLabel
-              : options.title !== undefined
-              ? options.title
-              : route.title;
+            if (event.defaultPrevented) {
+              preventDefault();
+            } else {
+              navigation.dispatch({
+                ...CommonActions.navigate(route.name, route.params),
+                target: state.key,
+              });
+            }
+          }}
 
-          return label;
+          renderIcon={({ route, focused, color }) => {
+            const { options } = descriptors[route.key];
+            if (options.tabBarIcon) {
+              return options.tabBarIcon({ focused, color, size: 24 });
+            }
+
+            return null;
+          }}
+          getLabelText={({ route }) => {
+            const { options } = descriptors[route.key];
+            const label =
+              options.tabBarLabel !== undefined
+                ? options.tabBarLabel
+                : options.title !== undefined
+                  ? options.title
+                  : route.title;
+
+            return label;
+          }}
+        />
+      )}
+    >
+
+      <Tab.Screen
+        // Home Screen Tab Content
+        name="Home"
+        component={HomeScreen}
+        options={{
+          tabBarLabel: 'Home',
+          tabBarIcon: ({ color, size }) => {
+            return <Icon name="power-sleep" size={size} color={color} />;
+          },
         }}
       />
-    )}
-  >
-
-    <Tab.Screen
-    // Home Screen Tab Content
-      name="Home"
-      component={HomeScreen}
-      options={{
-        tabBarLabel: 'Home',
-        tabBarIcon: ({ color, size }) => {
-          return <Icon name="power-sleep" size={size} color={color} />;
-        },
-      }}
-    />
 
 
-    <Tab.Screen
-    // Settings Screen Tab Content
-      name="Settings"
-      component={SettingsScreen}
-      options={{
-        tabBarLabel: 'Settings',// Tab Name
-        tabBarIcon: ({ color, size }) => {
-          return <Icon name="cog" size={size} color={color} />;// Tab icon
-        },
-      }}
-    />
+      <Tab.Screen
+        // Settings Screen Tab Content
+        name="Settings"
+        component={SettingsScreen}
+        options={{
+          tabBarLabel: 'Settings',// Tab Name
+          tabBarIcon: ({ color, size }) => {
+            return <Icon name="cog" size={size} color={color} />;// Tab icon
+          },
+        }}
+      />
 
 
-    <Tab.Screen
-    // Testing Screen Tab Content
-      name="Testing"
-      component={TestScreen}
-      options={{
-        tabBarLabel: 'Testing',// Tab Name
-        tabBarIcon: ({ color, size }) => {
-          return <Icon name="test-tube" size={size} color={color} />;// Tab icon
-        },
-      }}
-    />
+      <Tab.Screen
+        // Testing Screen Tab Content
+        name="Testing"
+        component={TestScreen}
+        options={{
+          tabBarLabel: 'Testing',// Tab Name
+          tabBarIcon: ({ color, size }) => {
+            return <Icon name="test-tube" size={size} color={color} />;// Tab icon
+          },
+        }}
+      />
 
-    <Tab.Screen
-    // Testing Screen Tab Content
-      name="My Profile"
-      component={Login}
-      options={{
-        tabBarLabel: 'My Profile',// Tab Name
-        tabBarIcon: ({ color, size }) => {
-          return <Icon name="account-circle" size={size} color={color} />;// Tab icon
-        },
-      }}
-    />
-    
+      <Tab.Screen
+        // Testing Screen Tab Content
+        name="My Profile"
+        component={Login}
+        options={{
+          tabBarLabel: 'My Profile',// Tab Name
+          tabBarIcon: ({ color, size }) => {
+            return <Icon name="account-circle" size={size} color={color} />;// Tab icon
+          },
+        }}
+      />
 
-  </Tab.Navigator>
+
+    </Tab.Navigator>
   )
 }
 
