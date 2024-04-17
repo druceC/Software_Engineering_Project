@@ -60,5 +60,6 @@ module.exports = StyleSheet.create({
         fontSize: 35,
         fontFamily: 'sans-serif-condensed',
         fontWeight: 'bold',
+        
     },
 });
