@@ -42,12 +42,13 @@ export const Login = () => {
     return (
         <Pressable onPress={Keyboard.dismiss}>
             <SafeAreaView>
-                <View style={styles.loginHeader}>
+            <View style={styles.loginHeader}>
                     <Image
                         source={require('../images/logo.png')} // The source of the logo image stored locally.
                         style={styles.loginLogo}
                         borderRadius={25} // Sets the border radius of the image for rounded corners.
                     />
+                    <Text style={styles.headerTitle}>Have a GoodNight 🌃</Text>
                 </View>
                 <View style={styles.loginInputBox}>
                     <TextInput

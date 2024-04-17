@@ -40,8 +40,13 @@
             "targetSdkVersion": 31,
             "buildToolsVersion": "31.0.0"
           }
+        },
+        "expo-font",
+        {
+          "Urbanist": ["./src/fonts/Urbanist.ttf"]
         }
       ]
     }
+
   }
 }
