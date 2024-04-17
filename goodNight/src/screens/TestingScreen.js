@@ -22,8 +22,8 @@ export const TestScreen = ({ navigation }) => {
     { text: "CBT-i Therapy Session", key: "1", navigate: "therapySessionMenu" },
     { text: "Locate Nearby Therapist", key: "2", navigate: "locateTherapistMenu" },
     { text: "Sleep Track", key: "3", navigate: "sleepTrackMenu" },
-    { text: "test login", key: "4", navigate: "testLogin" },
-    { text: "test Registration", key: "5", navigate: "testRegis", },
+    { text: "test login", key: "4", navigate: "LoginScreen" },
+    { text: "test Registration", key: "5", navigate: "RegistScreen", },
     { text: "blank Page", key: "6", navigate: "blankPage", },
   ]);
 

@@ -26,12 +26,15 @@ module.exports = StyleSheet.create({
     },
     loginLogo: {
         marginTop: '10%',
-        left: '35%',
         width: '30%',
         height: windowWidth * 0.3,
     },
     loginHeader: {
-        marginTop: '10%',
+        marginTop: '15%',
+        // flex: 1,
+        alignItems: 'center', 
+        justifyContent: 'center',
+        flexDirection: 'column',
     },
     loginInputBox: {
         marginTop: '5%',
@@ -51,5 +54,10 @@ module.exports = StyleSheet.create({
         width: '90%',
         left: '5%',
         textDecorationLine: 'underline',
+    },
+    headerTitle: {
+        marginTop: '5%',
+        fontSize: 30, 
+        fontFamily: 'Urbanist',
     },
 });

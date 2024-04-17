@@ -9,6 +9,8 @@ import { TestScreen } from './TestingScreen';
 import { HomeScreen } from './HomeScreen';
 import { SettingsScreen } from './SettingsScreen';
 import { Login } from './Login'
+import { SleepTrackMenu } from './SleepTrack';
+import { LocateTherapistMenu } from './LocateNearbyTherapist';
 
 
 const Tab = createBottomTabNavigator();
@@ -70,11 +72,11 @@ export const LandingPage = () => {
     >
 
       <Tab.Screen
-        // Home Screen Tab Content
-        name="Home"
-        component={HomeScreen}
+        // SleepTrackMenu Screen Tab Content
+        name="SleepTrackMenu"
+        component={SleepTrackMenu}
         options={{
-          tabBarLabel: 'Home',
+          tabBarLabel: 'Sleep Track',
           tabBarIcon: ({ color, size }) => {
             return <Icon name="power-sleep" size={size} color={color} />;
           },
@@ -83,13 +85,13 @@ export const LandingPage = () => {
 
 
       <Tab.Screen
-        // Settings Screen Tab Content
-        name="Settings"
-        component={SettingsScreen}
+        // LocateTherapist Screen Tab Content
+        name="LocateTherapist"
+        component={LocateTherapistMenu}
         options={{
-          tabBarLabel: 'Settings',// Tab Name
+          tabBarLabel: 'Find Therapist',// Tab Name
           tabBarIcon: ({ color, size }) => {
-            return <Icon name="cog" size={size} color={color} />;// Tab icon
+            return <Icon name="account-child" size={size} color={color} />;// Tab icon
           },
         }}
       />

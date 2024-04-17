@@ -40,8 +40,8 @@ export default function App() {
         <Stack.Screen name="therapySessionMenu" component={TherapySessionMenu} />
         <Stack.Screen name="locateTherapistMenu" component={LocateTherapistMenu} />
         <Stack.Screen name="sleepTrackMenu" component={SleepTrackMenu} />
-        <Stack.Screen name="testLogin" component={Login} />
-        <Stack.Screen name="testRegis" component={Register} />
+        <Stack.Screen name="LoginScreen" component={Login} />
+        <Stack.Screen name="RegistScreen" component={Register} />
         <Stack.Screen name="blankPage" component={BlankPage} />
       </Stack.Navigator>
     </NavigationContainer>

@@ -5,6 +5,7 @@ import auth from '@react-native-firebase/auth';
 import { Icon, TextInput } from 'react-native-paper';
 import { Button } from 'react-native';
 import { Button as PaperButton } from 'react-native-paper';
+import { Register } from './Registration';
 
 
 
@@ -17,7 +18,7 @@ export const Login = () => {
     const nav = useNavigation();
 
     const register = () => {
-        nav.push("Register");
+        nav.navigate("RegistScreen");
     }
 
     const loginSuccess = async () => {
@@ -33,7 +34,7 @@ export const Login = () => {
         }
     }
 
-    const handleIconPress = () => {
+    const handleEyeIconPress = () => {
         // Toggle the state for password visibility
         setIsPasswordVisible(!isPasswordVisible);
     };
@@ -43,7 +44,7 @@ export const Login = () => {
             <SafeAreaView>
                 <View style={styles.loginHeader}>
                     <Image
-                        source={require('../images/ghost.png')} // The source of the logo image stored locally.
+                        source={require('../images/logo.png')} // The source of the logo image stored locally.
                         style={styles.loginLogo}
                         borderRadius={25} // Sets the border radius of the image for rounded corners.
                     />
@@ -67,7 +68,7 @@ export const Login = () => {
                         right={ // Icon inside the TextInput that toggles the password visibility.
                             <TextInput.Icon
                                 icon={isPasswordVisible ? "eye" : "eye-off"} // Conditional icon based on the visibility state.
-                                onPress={handleIconPress} // Function to toggle the visibility state.
+                                onPress={handleEyeIconPress} // Function to toggle the visibility state.
                             />
                         }
                     />
@@ -99,5 +100,3 @@ export const Login = () => {
 }
 
 const styles = require('../../style');
-
-export default Login;
