@@ -32,7 +32,7 @@ module.exports = StyleSheet.create({
     loginHeader: {
         marginTop: '15%',
         // flex: 1,
-        alignItems: 'center', 
+        alignItems: 'center',
         justifyContent: 'center',
         flexDirection: 'column',
     },
@@ -57,7 +57,7 @@ module.exports = StyleSheet.create({
     },
     headerTitle: {
         marginTop: '5%',
-        fontSize: 30, 
-        fontFamily: 'Urbanist',
+        fontSize: 30,
+        // fontFamily: 'Urbanist_700Bold',
     },
 });

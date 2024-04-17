@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, SafeAreaView, Keyboard, Pressable, TouchableOpacity, Alert, Image, TouchableHighlight  } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 import auth from '@react-native-firebase/auth';
@@ -8,10 +8,10 @@ import { Button } from 'react-native';
 import { Button as PaperButton } from 'react-native-paper';
 
 export const Register = () => {
-    const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
+    const [name, setName] = React.useState("");
+    const [email, setEmail] = React.useState("");
+    const [password, setPassword] = React.useState("");
+    const [confirmPassword, setConfirmPassword] = React.useState("");
     const [isPasswordVisible, setIsPasswordVisible] = useState(true);
 
     const nav = useNavigation();
@@ -59,7 +59,6 @@ export const Register = () => {
                         label='Username' // Placeholder text shown when the input is empty.
                         value={name} // Controlled value of the input.
                         onChangeText={setName} // Function to update the state when the input changes.
-                        inputMode='setUsername' // Specifies that this input is for email addresses.
                     />
                     <TextInput
                         style={styles.loginTextInput}
@@ -67,7 +66,6 @@ export const Register = () => {
                         label='Email' // Placeholder text shown when the input is empty.
                         value={email} // Controlled value of the input.
                         onChangeText={setEmail} // Function to update the state when the input changes.
-                        inputMode='setEmail' // Specifies that this input is for email addresses.
                     />
                     <TextInput
                         style={styles.loginTextInput}

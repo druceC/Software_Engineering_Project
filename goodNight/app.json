@@ -29,7 +29,8 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins":{
+    "plugins":
+    {
       "@react-native-firebase/app":
       [
         "expo-build-properties",
