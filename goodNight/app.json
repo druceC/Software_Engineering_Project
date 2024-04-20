@@ -29,24 +29,17 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins":
-    {
-      "@react-native-firebase/app":
+    "plugins": [
+      "@react-native-firebase/app",
+      "@react-native-firebase/auth",
       [
         "expo-build-properties",
         {
-          "android": {
-            "compileSdkVersion": 31,
-            "targetSdkVersion": 31,
-            "buildToolsVersion": "31.0.0"
+          "ios": {
+            "useFrameworks": "static"
           }
-        },
-        "expo-font",
-        {
-          "Urbanist": ["./src/fonts/Urbanist.ttf"]
         }
       ]
-    }
-
+    ]
   }
 }
