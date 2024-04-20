@@ -8,8 +8,9 @@ export const LocateTherapistMenu = () => {
     return (
         <View style={styles.container}>
             <View style={styles.menuOption}>
-                <Text>Locate Nearby Therapist</Text>
                 <MapView style={styles.map} />
+                <Text>Locate Nearby Therapist</Text>
+                
             </View>
         </View>
     )
