@@ -24,8 +24,9 @@
     "formik": "^2.4.5",
     "module": "^1.2.5",
     "node": "^18.20.1",
-    "react": "18.2.0",
-    "react-native": "^0.73.6",
+    "react": "^18.2.0",
+    "react-native": "^0.73.7",
+    "react-native-maps": "^1.10.0",
     "react-native-paper": "^5.12.3"
   },
   "devDependencies": {
