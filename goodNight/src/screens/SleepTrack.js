@@ -1,89 +1,81 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, Alert } from 'react-native';
-import { TextInput, Button } from 'react-native-paper';
-import { format, parse, isAfter } from 'date-fns';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, Alert, Button } from 'react-native';
+
 import firestore from '@react-native-firebase/firestore';
+import { Accelerometer, Gyroscope } from 'expo-sensors';
+
 
 export const SleepTrackMenu = () => {
-  const [bedTime, setBedTime] = useState('');
-  const [wakeUpTime, setWakeUpTime] = useState('');
-  const [awakenings, setAwakenings] = useState('');
-  const [notes, setNotes] = useState('');
+  const [isTracking, setIsTracking] = useState(false);
+  const [sleepData, setSleepData] = useState({ asleep: false });
 
-  const handleSubmit = async () => {
-    // Validate the input data
-    if (!bedTime || !wakeUpTime || !awakenings) {
-      Alert.alert('Error', 'Please fill in all the required fields.');
-      return;
-    }
+  useEffect(() => {
+    let accelerometerSubscription = null;
+    let gyroscopeSubscription = null;
 
-    const parsedBedTime = parse(bedTime, 'HH:mm', new Date());
-    const parsedWakeUpTime = parse(wakeUpTime, 'HH:mm', new Date());
+    const startTracking = () => {
+      setIsTracking(true);
 
-    if (!isAfter(parsedWakeUpTime, parsedBedTime)) {
-      Alert.alert('Error', 'Wake up time must be after bed time.');
-      return;
-    }
+      // Start listening to accelerometer data
+      accelerometerSubscription = Accelerometer.addListener((data) => {
+        const { x, y, z } = data;
+        // Example sleep detection logic based on movement
+        const movement = Math.sqrt(x*x + y*y + z*z);
+        const asleep = movement < 0.02; // Low movement threshold for sleep detection
 
-    try {
-      // Save the sleep data to Firebase Firestore
-      await firestore().collection('sleepData').add({
-        bedTime: parsedBedTime,
-        wakeUpTime: parsedWakeUpTime,
-        awakenings: parseInt(awakenings),
-        notes,
-        createdAt: firestore.FieldValue.serverTimestamp(),
+        if (asleep !== sleepData.asleep) {
+          setSleepData({ asleep });
+          saveSleepData({ asleep });
+        }
       });
 
-      // Reset the form
-      setBedTime('');
-      setWakeUpTime('');
-      setAwakenings('');
-      setNotes('');
+      // Start listening to gyroscope data - optional based on further needs
+      gyroscopeSubscription = Gyroscope.addListener((data) => {
+        const { x, y, z } = data;
+        // Implement further motion analysis if needed
+      });
+    };
 
-      Alert.alert('Success', 'Sleep data recorded successfully.');
+    const stopTracking = () => {
+      setIsTracking(false);
+      accelerometerSubscription && accelerometerSubscription.remove();
+      gyroscopeSubscription && gyroscopeSubscription.remove();
+    };
+
+    if (isTracking) {
+      startTracking();
+    } else {
+      stopTracking();
+    }
+
+    return () => {
+      stopTracking();
+    };
+  }, [isTracking, sleepData]);
+
+  const saveSleepData = async (data) => {
+    try {
+      await firestore().collection('sleepData').add({
+        ...data,
+        createdAt: firestore.FieldValue.serverTimestamp(),
+      });
     } catch (error) {
       console.error('Error saving sleep data:', error);
       Alert.alert('Error', 'An error occurred while saving sleep data.');
     }
   };
 
+  const toggleTracking = () => {
+    setIsTracking((prevState) => !prevState);
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Record Sleep Data</Text>
-      <TextInput
-        label="Bed Time"
-        value={bedTime}
-        onChangeText={setBedTime}
-        style={styles.input}
-        keyboardType="numeric"
-        placeholder="HH:mm"
-      />
-      <TextInput
-        label="Wake Up Time"
-        value={wakeUpTime}
-        onChangeText={setWakeUpTime}
-        style={styles.input}
-        keyboardType="numeric"
-        placeholder="HH:mm"
-      />
-      <TextInput
-        label="Number of Awakenings"
-        value={awakenings}
-        onChangeText={setAwakenings}
-        style={styles.input}
-        keyboardType="numeric"
-      />
-      <TextInput
-        label="Notes"
-        value={notes}
-        onChangeText={setNotes}
-        style={styles.input}
-        multiline
-      />
-      <Button mode="contained" onPress={handleSubmit} style={styles.button}>
-        Submit
-      </Button>
+      <Text style={styles.title}>Sleep Tracking</Text>
+      <Text>
+        {isTracking ? 'Sleep tracking is active' : 'Sleep tracking is inactive'}
+      </Text>
+      <Button title={isTracking ? 'Stop Tracking' : 'Start Tracking'} onPress={toggleTracking} />
     </View>
   );
 };
@@ -97,11 +89,5 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 16,
-  },
-  input: {
-    marginBottom: 16,
-  },
-  button: {
-    marginTop: 16,
   },
 });
