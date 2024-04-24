@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, FlatList, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, FlatList, TouchableOpacity, ScrollViewComponent, ScrollView } from 'react-native';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { CommonActions } from '@react-navigation/native';
-import { Text, BottomNavigation } from 'react-native-paper';
+import { Text, BottomNavigation, Appbar } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-
 
 function MenuOptions({ item, pressHandler }) {
   return (
@@ -33,17 +32,23 @@ export const TestScreen = ({ navigation }) => {
   }
   return (
     // Component for Home Screen: lists different menus
-    <View style={styles.container}>
-      <View style={styles.list}>
-        <FlatList
-          data={menuOptions}
-          renderItem={({ item }) => (
-            <MenuOptions item={(item)} pressHandler={pressHandler} />
-          )}
-        />
+    <View>
+
+      <Appbar.Header>
+        <Appbar.BackAction onPress={() => navigation.goBack()} />
+        <Appbar.Content title="Testing Entries" />
+      </Appbar.Header>
+      <View>
+        <View style={styles.list}>
+          <FlatList
+            data={menuOptions}
+            renderItem={({ item }) => (
+              <MenuOptions item={(item)} pressHandler={pressHandler} />
+            )}
+          />
+        </View>
       </View>
     </View>
-
 
   )
 }

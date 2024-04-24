@@ -12,6 +12,7 @@ import { LandingPage } from './src/screens/LandingPage';
 import { BlankPage } from './src/screens/BlankPage';
 import { Text, BottomNavigation } from 'react-native-paper';
 import { ProfilePage } from './src/screens/ProfilePage';
+import { TestScreen } from './src/screens/TestingScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -30,7 +31,7 @@ export default function App() {
       >
 
         <Stack.Screen
-          name="Good Night Home Page 🌃"
+          name="LandingPage"
           component={LandingPage}
           screenOptions={{
             headerShown: false,
@@ -45,6 +46,7 @@ export default function App() {
         <Stack.Screen name="RegistScreen" component={Register} />
         <Stack.Screen name="blankPage" component={BlankPage} />
         <Stack.Screen name="ProfilePage" component={ProfilePage} />
+        <Stack.Screen name="TestScreen" component={TestScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

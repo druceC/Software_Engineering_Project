@@ -103,7 +103,7 @@ export const LandingPage = () => {
         name="TherapySession"
         component={TherapySessionMenu}
         options={{
-          tabBarLabel: 'Evaluate Your Sleep',// Tab Name
+          tabBarLabel: 'Evaluation',// Tab Name
           tabBarIcon: ({ color, size }) => {
             return <Icon name="account-circle" size={size} color={color} />;// Tab icon
           },
@@ -123,7 +123,7 @@ export const LandingPage = () => {
         }}
       />
 
-      <Tab.Screen
+      {/* <Tab.Screen
         // Testing Screen Tab Content
         name="Testing"
         component={TestScreen}
@@ -133,7 +133,7 @@ export const LandingPage = () => {
             return <Icon name="test-tube" size={size} color={color} />;// Tab icon
           },
         }}
-      />
+      /> */}
 
 
 

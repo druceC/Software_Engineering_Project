@@ -3,10 +3,12 @@ import { ScrollView, View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Avatar, Title, Paragraph, Button, Text, List, useTheme, Card, TouchableRipple } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { TestScreen } from './TestingScreen';
+import { useNavigation } from "@react-navigation/native";
 
 const ProfilePage = () => {
     // This is to use the theme colors from react-native-paper
     const { colors } = useTheme();
+    const nav = useNavigation();
 
     return (
         <ScrollView style={styles.container}>
@@ -73,10 +75,10 @@ const ProfilePage = () => {
                         style={styles.listItem}
                     />
                     <List.Item
-                        title="Settings"
-                        left={() => <List.Icon icon="cog" />}
+                        title="Dev Testing"
+                        left={() => <List.Icon icon="test-tube" />}
                         right={() => <List.Icon icon="chevron-right" />}
-                        onPress={() => { }}
+                        onPress={() => nav.navigate("TestScreen")}
                         style={styles.listItem}
                         borderBottomLeftRadius={15}
                         borderBottomRightRadius={15}
