@@ -12,6 +12,7 @@ import { Login } from './Login'
 import { SleepTrackMenu } from './SleepTrack';
 import { LocateTherapistMenu } from './LocateNearbyTherapist';
 import { ProfilePage } from './ProfilePage';
+import { TherapySessionMenu } from './TherapySessionMenu';
 
 
 const Tab = createBottomTabNavigator();
@@ -97,6 +98,30 @@ export const LandingPage = () => {
         }}
       />
 
+      <Tab.Screen
+        // Testing Screen Tab Content
+        name="TherapySession"
+        component={TherapySessionMenu}
+        options={{
+          tabBarLabel: 'Evaluate Your Sleep',// Tab Name
+          tabBarIcon: ({ color, size }) => {
+            return <Icon name="account-circle" size={size} color={color} />;// Tab icon
+          },
+        }}
+      />
+
+
+      <Tab.Screen
+        // Testing Screen Tab Content
+        name="My Profile"
+        component={ProfilePage}
+        options={{
+          tabBarLabel: 'My Profile',// Tab Name
+          tabBarIcon: ({ color, size }) => {
+            return <Icon name="account-circle" size={size} color={color} />;// Tab icon
+          },
+        }}
+      />
 
       <Tab.Screen
         // Testing Screen Tab Content
@@ -110,17 +135,6 @@ export const LandingPage = () => {
         }}
       />
 
-      <Tab.Screen
-        // Testing Screen Tab Content
-        name="My Profile"
-        component={ProfilePage}
-        options={{
-          tabBarLabel: 'My Profile',// Tab Name
-          tabBarIcon: ({ color, size }) => {
-            return <Icon name="account-circle" size={size} color={color} />;// Tab icon
-          },
-        }}
-      />
 
 
     </Tab.Navigator>
