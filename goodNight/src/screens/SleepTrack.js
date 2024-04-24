@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Alert, TouchableOpacity, Animated } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, Animated } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import { Accelerometer } from 'expo-sensors';
 import auth from '@react-native-firebase/auth';
+import { Audio } from 'expo-av';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import Slider from '@react-native-community/slider';
 
 export const SleepTrackMenu = () => {
   const [isTracking, setIsTracking] = useState(false);
@@ -16,6 +18,10 @@ export const SleepTrackMenu = () => {
   });
   const [duration, setDuration] = useState(0);
   const [buttonScale] = useState(new Animated.Value(1));
+  const [isMusicPlaying, setIsMusicPlaying] = useState(false);
+  const [musicProgress, setMusicProgress] = useState(0);
+  const [musicDuration, setMusicDuration] = useState(0);
+  const soundRef = useRef(null);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -53,9 +59,8 @@ export const SleepTrackMenu = () => {
         const asleep = movement < 1;
         console.log(asleep);
         if (asleep !== sleepData.asleep) {
-          
-          setSleepData(prevState => {
-            let updates = {...prevState, asleep};
+          setSleepData((prevState) => {
+            let updates = { ...prevState, asleep };
             if (asleep && !prevState.sleepStart) {
               updates.sleepStart = new Date(); // First time falling asleep
             }
@@ -77,21 +82,21 @@ export const SleepTrackMenu = () => {
     const user = auth().currentUser;
 
     if (user) {
-      console.log("User is logged in: ", user.email);
+      console.log('User is logged in: ', user.email);
     } else {
-      console.log("No user logged in.");
+      console.log('No user logged in.');
     }
-  
+
     if (user) {
-      console.log("User ID:", user.uid); // You can access the user's UID
-      console.log("User Email:", user.email); // You can access the user's email
+      console.log('User ID:', user.uid); // You can access the user's UID
+      console.log('User Email:', user.email); // You can access the user's email
     }
     const { sleepStart, sleepEnd, wakeTimes } = data;
     // Only attempt to save data if both sleepStart and sleepEnd are not null
     if (sleepStart && sleepEnd) {
       try {
         await firestore().collection('sleepData').add({
-          uid: user.uid, 
+          uid: user.uid,
           sleepStart,
           sleepEnd,
           wakeTimes,
@@ -108,22 +113,22 @@ export const SleepTrackMenu = () => {
       Alert.alert('Error', 'Sleep tracking data incomplete.');
     }
   };
-  
+
   const stopTracking = () => {
     if (isTracking) {
       setIsTracking(false);
-      setSleepData(prevState => {
+      setSleepData((prevState) => {
         const now = new Date();
         const updatedData = {
           ...prevState,
-          sleepEnd: prevState.sleepEnd || now,  // Ensure sleepEnd is set
-          asleep: false
+          sleepEnd: prevState.sleepEnd || now, // Ensure sleepEnd is set
+          asleep: false,
         };
         saveSleepData(updatedData);
         return updatedData;
       });
     }
-  };  
+  };
 
   const formatTime = (time) => {
     return time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -159,43 +164,76 @@ export const SleepTrackMenu = () => {
     ).start();
   };
 
+  const playMusic = async () => {
+    try {
+      const { sound } = await Audio.Sound.createAsync(require('../../assets/asmr.mp3'));
+      soundRef.current = sound;
+      const status = await sound.getStatusAsync();
+      setMusicDuration(status.durationMillis);
+      await sound.playAsync();
+      setIsMusicPlaying(true);
+
+      sound.setOnPlaybackStatusUpdate((status) => {
+        if (status.isLoaded && status.isPlaying) {
+          setMusicProgress(status.positionMillis);
+        }
+      });
+    } catch (error) {
+      console.log('Error playing music:', error);
+    }
+  };
+
+  const stopMusic = async () => {
+    if (soundRef.current) {
+      await soundRef.current.stopAsync();
+      setIsMusicPlaying(false);
+      setMusicProgress(0);
+    }
+  };
+
+  const handleMusicSliderChange = async (value) => {
+    if (soundRef.current) {
+      await soundRef.current.setPositionAsync(value);
+      setMusicProgress(value);
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <MaterialCommunityIcons name="sleep" size={24} color="#fff" />
-        <Text style={styles.title}>Sleep Monitoring</Text>
-      </View>
-      <View style={styles.content}>
-        <Text style={styles.timeText}>{formatTime(currentTime)}</Text>
-        <TouchableOpacity
-          style={[
-            styles.button,
-            isTracking ? styles.stopButton : styles.startButton,
-          ]}
-          onPress={isTracking ? stopTracking : startTracking}
-        >
-          <Animated.View
-            style={[
-              styles.buttonInner,
-              { transform: [{ scale: buttonScale }] },
-            ]}
-          >
-            <Text style={styles.buttonText}>
-              {isTracking ? 'Stop' : 'Start'}
-            </Text>
-          </Animated.View>
+      <Text style={styles.time}>{formatTime(currentTime)}</Text>
+      <TouchableOpacity
+        style={[styles.button, isTracking && styles.activeButton]}
+        onPress={isTracking ? stopTracking : startTracking}
+      >
+        <Animated.View style={[styles.buttonInner, { transform: [{ scale: buttonScale }] }]}>
+          {isTracking ? (
+            <Text style={styles.durationText}>{formatDuration(duration)}</Text>
+          ) : (
+            <MaterialCommunityIcons name="power-sleep" size={80} color="#FFFFFF" />
+          )}
+        </Animated.View>
+      </TouchableOpacity>
+      <View style={styles.musicContainer}>
+        <TouchableOpacity style={styles.musicButton} onPress={isMusicPlaying ? stopMusic : playMusic}>
+          <MaterialCommunityIcons
+            name={isMusicPlaying ? 'pause' : 'play'}
+            size={24}
+            color="#FFFFFF"
+          />
+          <Text style={styles.musicButtonText}>{isMusicPlaying ? 'Pause' : 'Raining'}</Text>
         </TouchableOpacity>
-        {isTracking && (
-          <Text style={styles.durationText}>
-            {formatDuration(duration)}
-          </Text>
+        {isMusicPlaying && (
+          <Slider
+            style={styles.musicSlider}
+            minimumValue={0}
+            maximumValue={musicDuration}
+            value={musicProgress}
+            onValueChange={handleMusicSliderChange}
+            minimumTrackTintColor="#FFFFFF"
+            maximumTrackTintColor="#4A5568"
+            thumbTintColor="#FFFFFF"
+          />
         )}
-        <Text style={styles.description}>
-          Monitor your sleep patterns and quality using your phone's sensors.
-        </Text>
-      </View>
-      <View style={styles.footer}>
-        <MaterialCommunityIcons name="moon-waning-crescent" size={80} color="#9b59b6" />
       </View>
     </View>
   );
@@ -204,75 +242,68 @@ export const SleepTrackMenu = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#e8f0ff',
-  },
-  header: {
-    flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#3498db',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginLeft: 8,
-  },
-  content: {
-    flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 16,
+    backgroundColor: '#1A202C',
   },
-  timeText: {
-    fontSize: 24,
+  time: {
+    fontSize: 48,
     fontWeight: 'bold',
-    color: '#2c3e50',
-    marginBottom: 24,
+    color: '#FFFFFF',
+    marginBottom: 40,
   },
   button: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    backgroundColor: '#2D3748',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 24,
-    elevation: 2,
+    marginBottom: 40,
+    elevation: 5,
+  },
+  activeButton: {
+    backgroundColor: '#3182CE',
   },
   buttonInner: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
+    width: 180,
+    height: 180,
+    borderRadius: 90,
+    backgroundColor: '#4A5568',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  startButton: {
-    backgroundColor: '#2ecc71',
-  },
-  stopButton: {
-    backgroundColor: '#e74c3c',
-  },
-  buttonText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#fff',
-    textAlign: 'center',
-  },
   durationText: {
-    fontSize: 24,
+    fontSize: 36,
     fontWeight: 'bold',
-    color: '#2c3e50',
-    marginBottom: 16,
+    color: '#FFFFFF',
   },
-  description: {
-    fontSize: 16,
-    color: '#34495e',
-    textAlign: 'center',
-    marginBottom: 24,
-  },
-  footer: {
+  musicContainer: {
+    width: '80%',
     alignItems: 'center',
-    paddingBottom: 32,
+    backgroundColor: '#2D3748',
+    borderRadius: 10,
+    paddingHorizontal: 20,
+    paddingVertical: 20,
+    elevation: 3,
+  },
+  musicButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#4A5568',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 5,
+    marginBottom: 20,
+  },
+  musicButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+    marginLeft: 10,
+  },
+  musicSlider: {
+    width: '100%',
+    height: 40,
   },
 });
