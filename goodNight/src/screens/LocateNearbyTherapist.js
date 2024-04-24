@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import firestore from '@react-native-firebase/firestore';
 import * as Location from 'expo-location';
+import { Avatar, Button, Card, Text, List } from 'react-native-paper';
+import { ScrollView } from 'react-native-gesture-handler';
+
 
 export const LocateTherapistMenu = () => {
     const [errorMsg, setErrorMsg] = useState(null);
@@ -16,7 +19,7 @@ export const LocateTherapistMenu = () => {
         { id: '3', name: 'Therapist C', latitude: 24.5178, longitude: 54.4403, description: 'Family counseling specialist.' },
         */
     ];
-    
+
 
     useEffect(() => {
         (async () => {
@@ -26,7 +29,7 @@ export const LocateTherapistMenu = () => {
                     setErrorMsg('Permission to access location was denied');
                     return;
                 }
-                
+
                 // Function for taking in user location -> will be stored in locations{} as id[0]
                 let currentLocation = await Location.getCurrentPositionAsync({
                     accuracy: Location.Accuracy.BestForNavigation
@@ -35,7 +38,7 @@ export const LocateTherapistMenu = () => {
                 // Separately store user lat and long for distance filtering 
                 const userLat = currentLocation.coords.latitude;
                 const userLon = currentLocation.coords.longitude;
-                  
+
                 const currentLocationEnhanced = {
                     id: '0',
                     name: 'Your Location',
@@ -43,7 +46,7 @@ export const LocateTherapistMenu = () => {
                     longitude: userLon,
                     description: 'Your current location'
                 };
-    
+
                 // Fetch therapist locations from Firestore
                 const snapshot = await firestore().collection('therapistLocations').get();
                 const therapists = snapshot.docs.map(doc => {
@@ -58,7 +61,7 @@ export const LocateTherapistMenu = () => {
                 });
 
                 //console.log("Location fetched comparison:", therapists);
-    
+
                 // Filter therapists within 50 km
                 const nearTherapists = therapists.filter(therapist => {
                     const distance = getDistanceFromLatLonInKm(
@@ -66,7 +69,7 @@ export const LocateTherapistMenu = () => {
                     );
                     return distance <= 50; // distance in km
                 });
-    
+
                 setLocations([currentLocationEnhanced, ...nearTherapists]);
                 //console.log("Location fetched and therapists filtered:", nearTherapists);
             } catch (error) {
@@ -74,12 +77,62 @@ export const LocateTherapistMenu = () => {
                 setErrorMsg('Failed to fetch location or therapists data');
             }
         })();
-    }, []);    
+    }, []);
 
     return (
         <View style={styles.container}>
             <View style={styles.menuOption}>
-                <Text>Locate Nearby Therapist</Text>
+                <Card style={styles.card}>
+                    <Card.Title title="Find your therapist" />
+                    <Card.Content>
+                        {locations.length > 0 ? (
+                            <MapView
+                                style={styles.map}
+                                initialRegion={{
+                                    latitude: locations[0].latitude,
+                                    longitude: locations[0].longitude,
+                                    latitudeDelta: 0.0922,
+                                    longitudeDelta: 0.0421,
+                                }}
+                            >
+                                {locations.map((location) => (
+                                    <Marker
+                                        key={location.id}
+                                        coordinate={{ latitude: location.latitude, longitude: location.longitude }}
+                                        title={location.name}
+                                        description={location.description}
+                                        pinColor={location.id === '0' ? 'blue' : 'red'}
+                                    />
+                                ))}
+                            </MapView>
+                        ) : (
+                            <Text>{errorMsg || 'Loading...'}</Text>
+                        )}
+
+                        <List.Item
+                            title="First Item"
+                            description="Item description"
+                            left={props => <List.Icon {...props} icon="account" />}
+                        />
+                        <List.Item
+                            title="First Item"
+                            description="Item description"
+                            left={props => <List.Icon {...props} icon="account" />}
+                        />
+                        <List.Item
+                            title="First Item"
+                            description="Item description"
+                            left={props => <List.Icon {...props} icon="account" />}
+                        />
+                        <List.Item
+                            title="First Item"
+                            description="Item description"
+                            left={props => <List.Icon {...props} icon="account" />}
+                        />
+                    </Card.Content>
+                    <Card.Actions>
+                    </Card.Actions>
+                </Card>
                 {/* 
                     This is the section where the map is printed on the screen
                     The element <MapView> is the overarching map printed in the screen
@@ -90,53 +143,32 @@ export const LocateTherapistMenu = () => {
                     * the styles design for MapView can be changed with styles.map in the stylesheet at the bottom of the code
                     * can change styles of marker if you want to
                 */}
-                { locations.length > 0 ? (
-                    <MapView
-                        style={styles.map}
-                        initialRegion={{
-                            latitude: locations[0].latitude,
-                            longitude: locations[0].longitude,
-                            latitudeDelta: 0.0922,
-                            longitudeDelta: 0.0421,
-                        }}
-                    >
-                        {locations.map((location) => (
-                            <Marker
-                                key={location.id}
-                                coordinate={{ latitude: location.latitude, longitude: location.longitude }}
-                                title={location.name}
-                                description={location.description}
-                                pinColor={location.id === '0' ? 'blue' : 'red'}
-                            />
-                        ))}
-                    </MapView>
-                ) : (
-                    <Text>{errorMsg || 'Loading...'}</Text>
-                )}
-                
+
+
+
             </View>
         </View>
-    );    
+    );
 }
 
 // Function for comparing distances between two locations
 // Used for filtering the therapists location from database
 function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
     var R = 6371; // Radius of the earth in km
-    var dLat = deg2rad(lat2-lat1);  // deg2rad below
-    var dLon = deg2rad(lon2-lon1); 
-    var a = 
-        Math.sin(dLat/2) * Math.sin(dLat/2) +
-        Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
-        Math.sin(dLon/2) * Math.sin(dLon/2); 
-    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+    var dLat = deg2rad(lat2 - lat1);  // deg2rad below
+    var dLon = deg2rad(lon2 - lon1);
+    var a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     var d = R * c; // Distance in km
     return d;
 }
 
 // Helping function for getDistanceFRomLatLonInKm
 function deg2rad(deg) {
-    return deg * (Math.PI/180);
+    return deg * (Math.PI / 180);
 }
 
 // Stylesheet
@@ -144,7 +176,8 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
-        padding: 40,
+        padding: 20,
+        paddingTop: 40,
     },
     menuOption: {
         flex: 1,
@@ -153,6 +186,11 @@ const styles = StyleSheet.create({
     },
     map: {
         width: '100%',
-        height: '100%',
+        height: 200,
+        borderRadius: 25,
     },
+    card: {
+        width: '100%',
+        height: '100%'
+    }
 });
