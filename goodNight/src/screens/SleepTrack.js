@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { StyleSheet, Text, View, Alert, Button } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, Alert, TouchableOpacity } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
-import { Accelerometer, Gyroscope } from 'expo-sensors';
+import { Accelerometer } from 'expo-sensors';
 import auth from '@react-native-firebase/auth';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export const SleepTrackMenu = () => {
   const [isTracking, setIsTracking] = useState(false);
@@ -10,7 +11,7 @@ export const SleepTrackMenu = () => {
     asleep: false,
     sleepStart: null,
     sleepEnd: null,
-    wakeTimes: []
+    wakeTimes: [],
   });
 
   useEffect(() => {
@@ -95,11 +96,33 @@ export const SleepTrackMenu = () => {
     }
   };  
 
+
+  
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Sleep Tracking</Text>
-      <Text>{isTracking ? 'Sleep tracking is active' : 'Sleep tracking is inactive'}</Text>
-      <Button title={isTracking ? 'Stop Tracking' : 'Start Tracking'} onPress={isTracking ? stopTracking : () => setIsTracking(true)} />
+      <View style={styles.header}>
+        <MaterialCommunityIcons name="sleep" size={24} color="#fff" />
+        <Text style={styles.title}>Sleep Tracker</Text>
+      </View>
+      <View style={styles.content}>
+        <TouchableOpacity
+          style={[
+            styles.button,
+            isTracking ? styles.stopButton : styles.startButton,
+          ]}
+          onPress={isTracking ? stopTracking : () => setIsTracking(true)}
+        >
+          <Text style={styles.buttonText}>
+            {isTracking ? 'Stop Sleep Tracking' : 'Start Sleep Tracking'}
+          </Text>
+        </TouchableOpacity>
+        <Text style={styles.description}>
+          Track your sleep patterns and quality using your phone's sensors.
+        </Text>
+      </View>
+      <View style={styles.footer}>
+        <MaterialCommunityIcons name="moon-waning-crescent" size={80} color="#4a4a4a" />
+      </View>
     </View>
   );
 };
@@ -107,11 +130,53 @@ export const SleepTrackMenu = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    backgroundColor: '#f0f0f0',
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#2c3e50',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
   },
   title: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
+    color: '#fff',
+    marginLeft: 8,
+  },
+  content: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+  },
+  button: {
+    paddingHorizontal: 32,
+    paddingVertical: 16,
+    borderRadius: 8,
     marginBottom: 16,
+    elevation: 2,
+  },
+  startButton: {
+    backgroundColor: '#3498db',
+  },
+  stopButton: {
+    backgroundColor: '#e74c3c',
+  },
+  buttonText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#fff',
+    textAlign: 'center',
+  },
+  description: {
+    fontSize: 16,
+    color: '#4a4a4a',
+    textAlign: 'center',
+  },
+  footer: {
+    alignItems: 'center',
+    paddingBottom: 32,
   },
 });
