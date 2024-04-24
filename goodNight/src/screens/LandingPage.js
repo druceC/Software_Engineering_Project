@@ -11,6 +11,7 @@ import { SettingsScreen } from './SettingsScreen';
 import { Login } from './Login'
 import { SleepTrackMenu } from './SleepTrack';
 import { LocateTherapistMenu } from './LocateNearbyTherapist';
+import { ProfilePage } from './ProfilePage';
 
 
 const Tab = createBottomTabNavigator();
@@ -112,7 +113,7 @@ export const LandingPage = () => {
       <Tab.Screen
         // Testing Screen Tab Content
         name="My Profile"
-        component={Login}
+        component={ProfilePage}
         options={{
           tabBarLabel: 'My Profile',// Tab Name
           tabBarIcon: ({ color, size }) => {

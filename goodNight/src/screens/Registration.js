@@ -23,7 +23,7 @@ export const Register = () => {
     const registerImmediately = async () => {
         if (email && password) {
             try {
-                const response = await auth().createUserWithEmailAndPassword(email, password);
+                const response = await auth().signInWithEmailAndPassword(email, password);
 
                 if (response.user) {
                     await createProfile(response);

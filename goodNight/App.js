@@ -11,6 +11,7 @@ import { Register } from './src/screens/Registration';
 import { LandingPage } from './src/screens/LandingPage';
 import { BlankPage } from './src/screens/BlankPage';
 import { Text, BottomNavigation } from 'react-native-paper';
+import { ProfilePage } from './src/screens/ProfilePage';
 
 const Stack = createNativeStackNavigator();
 
@@ -43,6 +44,7 @@ export default function App() {
         <Stack.Screen name="LoginScreen" component={Login} />
         <Stack.Screen name="RegistScreen" component={Register} />
         <Stack.Screen name="blankPage" component={BlankPage} />
+        <Stack.Screen name="ProfilePage" component={ProfilePage} />
       </Stack.Navigator>
     </NavigationContainer>
   );
