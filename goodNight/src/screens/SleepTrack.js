@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Alert, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Alert, TouchableOpacity, Animated } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import { Accelerometer } from 'expo-sensors';
 import auth from '@react-native-firebase/auth';
@@ -7,12 +7,41 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export const SleepTrackMenu = () => {
   const [isTracking, setIsTracking] = useState(false);
+  const [currentTime, setCurrentTime] = useState(new Date());
   const [sleepData, setSleepData] = useState({
     asleep: false,
     sleepStart: null,
     sleepEnd: null,
     wakeTimes: [],
   });
+  const [duration, setDuration] = useState(0);
+  const [buttonScale] = useState(new Animated.Value(1));
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => {
+      clearInterval(timer);
+    };
+  }, []);
+
+  useEffect(() => {
+    let interval;
+
+    if (isTracking) {
+      interval = setInterval(() => {
+        setDuration((prevDuration) => prevDuration + 1);
+      }, 1000);
+    } else {
+      setDuration(0);
+    }
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [isTracking]);
 
   useEffect(() => {
     let accelerometerSubscription;
@@ -96,32 +125,77 @@ export const SleepTrackMenu = () => {
     }
   };  
 
+  const formatTime = (time) => {
+    return time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
 
-  
+  const formatDuration = (duration) => {
+    const hours = Math.floor(duration / 3600);
+    const minutes = Math.floor((duration % 3600) / 60);
+    const seconds = duration % 60;
+
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  const startTracking = () => {
+    setIsTracking(true);
+    animateButton();
+  };
+
+  const animateButton = () => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(buttonScale, {
+          toValue: 1.2,
+          duration: 1000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(buttonScale, {
+          toValue: 1,
+          duration: 1000,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <MaterialCommunityIcons name="sleep" size={24} color="#fff" />
-        <Text style={styles.title}>Sleep Tracker</Text>
+        <Text style={styles.title}>Sleep Monitoring</Text>
       </View>
       <View style={styles.content}>
+        <Text style={styles.timeText}>{formatTime(currentTime)}</Text>
         <TouchableOpacity
           style={[
             styles.button,
             isTracking ? styles.stopButton : styles.startButton,
           ]}
-          onPress={isTracking ? stopTracking : () => setIsTracking(true)}
+          onPress={isTracking ? stopTracking : startTracking}
         >
-          <Text style={styles.buttonText}>
-            {isTracking ? 'Stop Sleep Tracking' : 'Start Sleep Tracking'}
-          </Text>
+          <Animated.View
+            style={[
+              styles.buttonInner,
+              { transform: [{ scale: buttonScale }] },
+            ]}
+          >
+            <Text style={styles.buttonText}>
+              {isTracking ? 'Stop' : 'Start'}
+            </Text>
+          </Animated.View>
         </TouchableOpacity>
+        {isTracking && (
+          <Text style={styles.durationText}>
+            {formatDuration(duration)}
+          </Text>
+        )}
         <Text style={styles.description}>
-          Track your sleep patterns and quality using your phone's sensors.
+          Monitor your sleep patterns and quality using your phone's sensors.
         </Text>
       </View>
       <View style={styles.footer}>
-        <MaterialCommunityIcons name="moon-waning-crescent" size={80} color="#4a4a4a" />
+        <MaterialCommunityIcons name="moon-waning-crescent" size={80} color="#9b59b6" />
       </View>
     </View>
   );
@@ -130,12 +204,12 @@ export const SleepTrackMenu = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#e8f0ff',
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#2c3e50',
+    backgroundColor: '#3498db',
     paddingHorizontal: 16,
     paddingVertical: 12,
   },
@@ -151,15 +225,30 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
   },
+  timeText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#2c3e50',
+    marginBottom: 24,
+  },
   button: {
-    paddingHorizontal: 32,
-    paddingVertical: 16,
-    borderRadius: 8,
-    marginBottom: 16,
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 24,
     elevation: 2,
   },
+  buttonInner: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   startButton: {
-    backgroundColor: '#3498db',
+    backgroundColor: '#2ecc71',
   },
   stopButton: {
     backgroundColor: '#e74c3c',
@@ -170,10 +259,17 @@ const styles = StyleSheet.create({
     color: '#fff',
     textAlign: 'center',
   },
+  durationText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#2c3e50',
+    marginBottom: 16,
+  },
   description: {
     fontSize: 16,
-    color: '#4a4a4a',
+    color: '#34495e',
     textAlign: 'center',
+    marginBottom: 24,
   },
   footer: {
     alignItems: 'center',
