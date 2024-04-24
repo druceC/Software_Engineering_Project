@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { StyleSheet, Text, View, Alert, Button } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import { Accelerometer, Gyroscope } from 'expo-sensors';
-import { getAuth } from 'firebase/auth';
+import auth from '@react-native-firebase/auth';
 
 export const SleepTrackMenu = () => {
   const [isTracking, setIsTracking] = useState(false);
@@ -20,9 +20,10 @@ export const SleepTrackMenu = () => {
       Accelerometer.setUpdateInterval(1000); // update every second
       accelerometerSubscription = Accelerometer.addListener(({ x, y, z }) => {
         const movement = Math.sqrt(x * x + y * y + z * z);
-        const asleep = movement < 0.02;
-
+        const asleep = movement < 1;
+        console.log(asleep);
         if (asleep !== sleepData.asleep) {
+          
           setSleepData(prevState => {
             let updates = {...prevState, asleep};
             if (asleep && !prevState.sleepStart) {
@@ -43,14 +44,24 @@ export const SleepTrackMenu = () => {
   }, [isTracking, sleepData.asleep]);
 
   const saveSleepData = async (data) => {
-    //const auth = getAuth();
-    //const user = auth.currentUser;
+    const user = auth().currentUser;
+
+    if (user) {
+      console.log("User is logged in: ", user.email);
+    } else {
+      console.log("No user logged in.");
+    }
+  
+    if (user) {
+      console.log("User ID:", user.uid); // You can access the user's UID
+      console.log("User Email:", user.email); // You can access the user's email
+    }
     const { sleepStart, sleepEnd, wakeTimes } = data;
     // Only attempt to save data if both sleepStart and sleepEnd are not null
     if (sleepStart && sleepEnd) {
       try {
         await firestore().collection('sleepData').add({
-          //uid: user.uid, 
+          uid: user.uid, 
           sleepStart,
           sleepEnd,
           wakeTimes,

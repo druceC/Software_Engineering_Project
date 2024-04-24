@@ -7,9 +7,6 @@ import { Button } from 'react-native';
 import { Button as PaperButton } from 'react-native-paper';
 import { Register } from './Registration';
 
-
-
-
 export const Login = () => {
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
