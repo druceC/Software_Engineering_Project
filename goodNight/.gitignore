@@ -38,4 +38,4 @@ yarn-error.*
 .vscode
 
 #.idea
-.idea/vcs.xml
+.idea
