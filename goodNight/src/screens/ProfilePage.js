@@ -40,7 +40,7 @@ const ProfilePage = () => {
                     <List.Item
                         title="Graphs & Reports"
                         left={() => <List.Icon icon="chart-bar" />}
-                        right={() => <List.Icon icon="chevron-right" />}
+                        GoogleMap 
                         style={styles.listItem}
                         onPress={() => { }}
                         borderTopLeftRadius={15}

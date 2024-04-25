@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, View, ScrollView } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import firestore from '@react-native-firebase/firestore';
@@ -15,14 +15,36 @@ export const LocateTherapistMenu = () => {
     ]); //Array for storing locations of therapists -> 0 entry will be user location
 
     const preparedLocations = [
-        // User's location as the first entry
-        { id: '0', name: 'Your Location', latitude: 37.7749, longitude: -122.4194, description: 'You are here in San Francisco' },
         // Example therapists' locations
-        { id: '1', name: 'Therapist A', latitude: 37.7749, longitude: -122.4195, description: 'Specializes in cognitive therapy.' },
-        { id: '2', name: 'Therapist B', latitude: 37.7854, longitude: -122.4072, description: 'Expert in behavioral therapy.' },
-        { id: '3', name: 'Therapist C', latitude: 37.7645, longitude: -122.4732, description: 'Family counseling specialist.' },
+        { id: '1', name: 'Therapist A', latitude: 37.7649, longitude: -122.4175, description: 'Specializes in Overwatch.' },
+        { id: '2', name: 'Therapist B', latitude: 37.7854, longitude: -122.4072, description: 'Expert in Zelda.' },
+        { id: '3', name: 'Therapist C', latitude: 37.7645, longitude: -122.4732, description: 'Resident Evil specialist.' },
         { id: '4', name: 'Therapist D', latitude: 37.7733, longitude: -122.4792, description: 'CSGO Master Rank' },
     ];
+
+    const [region, setRegion] = useState({
+        latitude: 37.7749,
+        longitude: -122.4194,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+    });
+
+    const onItemPress = (location) => {
+        setRegion({
+            latitude: location.latitude,
+            longitude: location.longitude,
+            latitudeDelta: 0.005,
+            longitudeDelta: 0.005,
+        });
+        mapRef.current.animateToRegion({
+            latitude: location.latitude,
+            longitude: location.longitude,
+            latitudeDelta: 0.005,
+            longitudeDelta: 0.005,
+        }, 1000);
+    };
+
+    const mapRef = useRef(null);
 
 
     useEffect(() => {
@@ -85,38 +107,33 @@ export const LocateTherapistMenu = () => {
 
     return (
         <View style={styles.container}>
-            {locations.length > 0 ? (
-                <MapView
-                    style={styles.map}
-                    initialRegion={{
-                        latitude: locations[0].latitude,
-                        longitude: locations[0].longitude,
-                        latitudeDelta: 0.0922,
-                        longitudeDelta: 0.0421,
-                    }}
-                >
-                    {locations.map((location) => (
-                        <Marker
-                            key={location.id}
-                            coordinate={{ latitude: location.latitude, longitude: location.longitude }}
-                            title={location.name}
-                            description={location.description}
-                            pinColor={location.id === '0' ? 'blue' : 'red'}
-                        />
-                    ))}
-                </MapView>
-            ) : (
-                <Text>{errorMsg || 'Loading...'}</Text>
-            )}
+            <MapView
+                ref={mapRef}
+                style={styles.map}
+                region={region}
+                showsUserLocation={true}
+                showsMyLocationButton={true}
+            >
+                {preparedLocations.map(location => (
+                    <Marker
+                        key={location.id}
+                        coordinate={{ latitude: location.latitude, longitude: location.longitude }}
+                        title={location.name}
+                        description={location.description}
+                        pinColor={location.id === '0' ? 'blue' : 'red'}
+                    />
+                ))}
+            </MapView>
             <SafeAreaView style={styles.listContainer}>
                 <ScrollView>
-                    {preparedLocations.map((location, index) => (
+                    {preparedLocations.filter(location => location.id > 0).map((location, index) => (
                         <List.Item
                             key={index}
                             title={location.name}
                             description={location.description}
                             left={props => <List.Icon {...props} icon="account" />}
-                            onPress={() => console.log('Pressed', location.name)}
+                            right={() => <List.Icon icon="chevron-right" />}
+                            onPress={() => onItemPress(location)}
                         />
                     ))}
                 </ScrollView>
