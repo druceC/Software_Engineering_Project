@@ -13,6 +13,7 @@ import { SleepTrackMenu } from './SleepTrack';
 import { LocateTherapistMenu } from './LocateNearbyTherapist';
 import { ProfilePage } from './ProfilePage';
 import { TherapySessionMenu } from './TherapySessionMenu';
+import { ReportScreen } from './ReportScreen';
 
 
 const Tab = createBottomTabNavigator();
@@ -87,16 +88,17 @@ export const LandingPage = () => {
 
 
       <Tab.Screen
-        // LocateTherapist Screen Tab Content
-        name="LocateTherapist"
-        component={LocateTherapistMenu}
+        // Testing Screen Tab Content
+        name="Reports"
+        component={ReportScreen}
         options={{
-          tabBarLabel: 'Find Therapist',// Tab Name
+          tabBarLabel: 'Reports',// Tab Name
           tabBarIcon: ({ color, size }) => {
-            return <Icon name="account-child" size={size} color={color} />;// Tab icon
+            return <Icon name="chart-bar" size={size} color={color} />;// Tab icon
           },
         }}
       />
+
 
       <Tab.Screen
         // Testing Screen Tab Content
@@ -105,11 +107,23 @@ export const LandingPage = () => {
         options={{
           tabBarLabel: 'Evaluation',// Tab Name
           tabBarIcon: ({ color, size }) => {
-            return <Icon name="account-circle" size={size} color={color} />;// Tab icon
+            return <Icon name="form-select" size={size} color={color} />;// Tab icon
           },
         }}
       />
 
+
+      <Tab.Screen
+        // LocateTherapist Screen Tab Content
+        name="LocateTherapist"
+        component={LocateTherapistMenu}
+        options={{
+          tabBarLabel: 'Therapist',// Tab Name
+          tabBarIcon: ({ color, size }) => {
+            return <Icon name="account-child" size={size} color={color} />;// Tab icon
+          },
+        }}
+      />
 
       <Tab.Screen
         // Testing Screen Tab Content
@@ -123,17 +137,7 @@ export const LandingPage = () => {
         }}
       />
 
-      {/* <Tab.Screen
-        // Testing Screen Tab Content
-        name="Testing"
-        component={TestScreen}
-        options={{
-          tabBarLabel: 'Testing',// Tab Name
-          tabBarIcon: ({ color, size }) => {
-            return <Icon name="test-tube" size={size} color={color} />;// Tab icon
-          },
-        }}
-      /> */}
+
 
 
 

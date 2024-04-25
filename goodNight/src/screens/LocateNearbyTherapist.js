@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, ScrollView } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import firestore from '@react-native-firebase/firestore';
 import * as Location from 'expo-location';
 import { Avatar, Button, Card, Text, List } from 'react-native-paper';
-import { ScrollView } from 'react-native-gesture-handler';
+// import { ScrollView } from 'react-native-gesture-handler';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 export const LocateTherapistMenu = () => {
@@ -108,27 +109,38 @@ export const LocateTherapistMenu = () => {
                         ) : (
                             <Text>{errorMsg || 'Loading...'}</Text>
                         )}
-
-                        <List.Item
-                            title="First Item"
-                            description="Item description"
-                            left={props => <List.Icon {...props} icon="account" />}
-                        />
-                        <List.Item
-                            title="First Item"
-                            description="Item description"
-                            left={props => <List.Icon {...props} icon="account" />}
-                        />
-                        <List.Item
-                            title="First Item"
-                            description="Item description"
-                            left={props => <List.Icon {...props} icon="account" />}
-                        />
-                        <List.Item
-                            title="First Item"
-                            description="Item description"
-                            left={props => <List.Icon {...props} icon="account" />}
-                        />
+                        <SafeAreaView>
+                            <ScrollView>
+                                <List.Item
+                                    title="First Item"
+                                    description="Item description"
+                                    left={props => <List.Icon {...props} icon="account" />}
+                                />
+                                <List.Item
+                                    title="First Item"
+                                    description="Item description"
+                                    left={props => <List.Icon {...props} icon="account" />}
+                                />
+                                <List.Item
+                                    title="First Item"
+                                    description="Item description"
+                                    left={props => <List.Icon {...props} icon="account" />}
+                                />
+                                <List.Item
+                                    title="First Item"
+                                    description="Item description"
+                                    left={props => <List.Icon {...props} icon="account" />}
+                                /><List.Item
+                                    title="First Item"
+                                    description="Item description"
+                                    left={props => <List.Icon {...props} icon="account" />}
+                                /><List.Item
+                                    title="First Item"
+                                    description="Item description"
+                                    left={props => <List.Icon {...props} icon="account" />}
+                                />
+                            </ScrollView>
+                        </SafeAreaView>
                     </Card.Content>
                     <Card.Actions>
                     </Card.Actions>
@@ -143,8 +155,6 @@ export const LocateTherapistMenu = () => {
                     * the styles design for MapView can be changed with styles.map in the stylesheet at the bottom of the code
                     * can change styles of marker if you want to
                 */}
-
-
 
             </View>
         </View>
