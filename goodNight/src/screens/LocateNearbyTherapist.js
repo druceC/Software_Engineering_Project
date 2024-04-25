@@ -82,84 +82,90 @@ export const LocateTherapistMenu = () => {
 
     return (
         <View style={styles.container}>
-            <View style={styles.menuOption}>
-                <Card style={styles.card}>
-                    <Card.Title title="Find your therapist" />
-                    <Card.Content>
-                        {locations.length > 0 ? (
-                            <MapView
-                                style={styles.map}
-                                initialRegion={{
-                                    latitude: locations[0].latitude,
-                                    longitude: locations[0].longitude,
-                                    latitudeDelta: 0.0922,
-                                    longitudeDelta: 0.0421,
-                                }}
-                            >
-                                {locations.map((location) => (
-                                    <Marker
-                                        key={location.id}
-                                        coordinate={{ latitude: location.latitude, longitude: location.longitude }}
-                                        title={location.name}
-                                        description={location.description}
-                                        pinColor={location.id === '0' ? 'blue' : 'red'}
-                                    />
-                                ))}
-                            </MapView>
-                        ) : (
-                            <Text>{errorMsg || 'Loading...'}</Text>
-                        )}
-                        <SafeAreaView>
-                            <ScrollView>
-                                <List.Item
-                                    title="First Item"
-                                    description="Item description"
-                                    left={props => <List.Icon {...props} icon="account" />}
-                                />
-                                <List.Item
-                                    title="First Item"
-                                    description="Item description"
-                                    left={props => <List.Icon {...props} icon="account" />}
-                                />
-                                <List.Item
-                                    title="First Item"
-                                    description="Item description"
-                                    left={props => <List.Icon {...props} icon="account" />}
-                                />
-                                <List.Item
-                                    title="First Item"
-                                    description="Item description"
-                                    left={props => <List.Icon {...props} icon="account" />}
-                                /><List.Item
-                                    title="First Item"
-                                    description="Item description"
-                                    left={props => <List.Icon {...props} icon="account" />}
-                                /><List.Item
-                                    title="First Item"
-                                    description="Item description"
-                                    left={props => <List.Icon {...props} icon="account" />}
-                                />
-                            </ScrollView>
-                        </SafeAreaView>
-                    </Card.Content>
-                    <Card.Actions>
-                    </Card.Actions>
-                </Card>
-                {/* 
-                    This is the section where the map is printed on the screen
-                    The element <MapView> is the overarching map printed in the screen
-                    The element <Marker> is for the marker on the map
-                    - Currently we check if the location stored is therapists' or users'
-                    - If users' the marker is printed blue
-                    - If therapists' the marker is printed red
-                    * the styles design for MapView can be changed with styles.map in the stylesheet at the bottom of the code
-                    * can change styles of marker if you want to
-                */}
-
-            </View>
+            {locations.length > 0 ? (
+                <MapView
+                    style={styles.map}
+                    initialRegion={{
+                        latitude: locations[0].latitude,
+                        longitude: locations[0].longitude,
+                        latitudeDelta: 0.0922,
+                        longitudeDelta: 0.0421,
+                    }}
+                >
+                    {locations.map((location) => (
+                        <Marker
+                            key={location.id}
+                            coordinate={{ latitude: location.latitude, longitude: location.longitude }}
+                            title={location.name}
+                            description={location.description}
+                            pinColor={location.id === '0' ? 'blue' : 'red'}
+                        />
+                    ))}
+                </MapView>
+            ) : (
+                <Text>{errorMsg || 'Loading...'}</Text>
+            )}
+            <SafeAreaView style={styles.listContainer}>
+                <ScrollView>
+                {locations.map((location, index) => (
+                        <List.Item
+                            key={index}
+                            title={location.name}
+                            description={location.description}
+                            left={props => <List.Icon {...props} icon="account" />}
+                            onPress={() => console.log('Pressed', location.name)}
+                        />
+                    ))}
+                    {locations.map((location, index) => (
+                        <List.Item
+                            key={index}
+                            title={location.name}
+                            description={location.description}
+                            left={props => <List.Icon {...props} icon="account" />}
+                            onPress={() => console.log('Pressed', location.name)}
+                        />
+                    ))}
+                                        {locations.map((location, index) => (
+                        <List.Item
+                            key={index}
+                            title={location.name}
+                            description={location.description}
+                            left={props => <List.Icon {...props} icon="account" />}
+                            onPress={() => console.log('Pressed', location.name)}
+                        />
+                    ))}
+                    {locations.map((location, index) => (
+                        <List.Item
+                            key={index}
+                            title={location.name}
+                            description={location.description}
+                            left={props => <List.Icon {...props} icon="account" />}
+                            onPress={() => console.log('Pressed', location.name)}
+                        />
+                    ))}
+                                        {locations.map((location, index) => (
+                        <List.Item
+                            key={index}
+                            title={location.name}
+                            description={location.description}
+                            left={props => <List.Icon {...props} icon="account" />}
+                            onPress={() => console.log('Pressed', location.name)}
+                        />
+                    ))}
+                    {locations.map((location, index) => (
+                        <List.Item
+                            key={index}
+                            title={location.name}
+                            description={location.description}
+                            left={props => <List.Icon {...props} icon="account" />}
+                            onPress={() => console.log('Pressed', location.name)}
+                        />
+                    ))}
+                </ScrollView>
+            </SafeAreaView>
         </View>
     );
-}
+};
 
 // Function for comparing distances between two locations
 // Used for filtering the therapists location from database
@@ -185,9 +191,6 @@ function deg2rad(deg) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
-        padding: 20,
-        paddingTop: 40,
     },
     menuOption: {
         flex: 1,
@@ -196,11 +199,10 @@ const styles = StyleSheet.create({
     },
     map: {
         width: '100%',
-        height: 200,
+        height: '60%',
         borderRadius: 25,
     },
-    card: {
-        width: '100%',
-        height: '100%'
-    }
+    listContainer: {
+        flex: 1,
+    },
 });
