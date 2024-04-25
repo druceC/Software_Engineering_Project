@@ -16,10 +16,13 @@ export const LocateTherapistMenu = () => {
 
     const preparedLocations = [
         // Example therapists' locations
-        { id: '1', name: 'Therapist A', latitude: 37.7649, longitude: -122.4175, description: 'Specializes in Overwatch.' },
-        { id: '2', name: 'Therapist B', latitude: 37.7854, longitude: -122.4072, description: 'Expert in Zelda.' },
-        { id: '3', name: 'Therapist C', latitude: 37.7645, longitude: -122.4732, description: 'Resident Evil specialist.' },
-        { id: '4', name: 'Therapist D', latitude: 37.7733, longitude: -122.4792, description: 'CSGO Master Rank' },
+        { id: '1', name: 'Therapist A', latitude: 24.5349, longitude: 54.4575, description: 'Specializes in Overwatch.' },
+        { id: '2', name: 'Therapist B', latitude: 24.5154, longitude: 54.4372, description: 'Expert in Zelda.' },
+        { id: '3', name: 'Therapist C', latitude: 24.5245, longitude: 54.4332, description: 'Resident Evil specialist.' },
+        { id: '4', name: 'Therapist D', latitude: 24.5333, longitude: 54.4492, description: 'CSGO Master Rank' },
+        { id: '5', name: 'Therapist E', latitude: 24.5146, longitude: 54.4685, description: 'Therapist from Cyberpunk 2077' },
+        { id: '6', name: 'Therapist F', latitude: 24.5288, longitude: 54.4176, description: 'Especially good at playing Genshin' },
+        { id: '7', name: 'Therapist G', latitude: 24.5763, longitude: 54.4348, description: 'Self Learnt Therapist' },
     ];
 
     const [region, setRegion] = useState({
@@ -104,6 +107,7 @@ export const LocateTherapistMenu = () => {
             }
         })();
     }, []);
+
 
     return (
         <View style={styles.container}>
