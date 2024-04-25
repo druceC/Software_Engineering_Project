@@ -10,15 +10,18 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 export const LocateTherapistMenu = () => {
     const [errorMsg, setErrorMsg] = useState(null);
-    const [locations, setLocations] = useState([]); //Array for storing locations of therapists -> 0 entry will be user location
+    const [locations, setLocations] = useState([
+
+    ]); //Array for storing locations of therapists -> 0 entry will be user location
 
     const preparedLocations = [
-        /*
-        Sample hardcoded locations before implementing firebase -> now obsolete
-        { id: '1', name: 'Therapist A', latitude: 24.5364, longitude: 54.4771, description: 'Specializes in cognitive therapy.' },
-        { id: '2', name: 'Therapist B', latitude: 24.5296, longitude: 54.4282, description: 'Expert in behavioral therapy.' },
-        { id: '3', name: 'Therapist C', latitude: 24.5178, longitude: 54.4403, description: 'Family counseling specialist.' },
-        */
+        // User's location as the first entry
+        { id: '0', name: 'Your Location', latitude: 37.7749, longitude: -122.4194, description: 'You are here in San Francisco' },
+        // Example therapists' locations
+        { id: '1', name: 'Therapist A', latitude: 37.7749, longitude: -122.4195, description: 'Specializes in cognitive therapy.' },
+        { id: '2', name: 'Therapist B', latitude: 37.7854, longitude: -122.4072, description: 'Expert in behavioral therapy.' },
+        { id: '3', name: 'Therapist C', latitude: 37.7645, longitude: -122.4732, description: 'Family counseling specialist.' },
+        { id: '4', name: 'Therapist D', latitude: 37.7733, longitude: -122.4792, description: 'CSGO Master Rank' },
     ];
 
 
@@ -107,52 +110,7 @@ export const LocateTherapistMenu = () => {
             )}
             <SafeAreaView style={styles.listContainer}>
                 <ScrollView>
-                {locations.map((location, index) => (
-                        <List.Item
-                            key={index}
-                            title={location.name}
-                            description={location.description}
-                            left={props => <List.Icon {...props} icon="account" />}
-                            onPress={() => console.log('Pressed', location.name)}
-                        />
-                    ))}
-                    {locations.map((location, index) => (
-                        <List.Item
-                            key={index}
-                            title={location.name}
-                            description={location.description}
-                            left={props => <List.Icon {...props} icon="account" />}
-                            onPress={() => console.log('Pressed', location.name)}
-                        />
-                    ))}
-                                        {locations.map((location, index) => (
-                        <List.Item
-                            key={index}
-                            title={location.name}
-                            description={location.description}
-                            left={props => <List.Icon {...props} icon="account" />}
-                            onPress={() => console.log('Pressed', location.name)}
-                        />
-                    ))}
-                    {locations.map((location, index) => (
-                        <List.Item
-                            key={index}
-                            title={location.name}
-                            description={location.description}
-                            left={props => <List.Icon {...props} icon="account" />}
-                            onPress={() => console.log('Pressed', location.name)}
-                        />
-                    ))}
-                                        {locations.map((location, index) => (
-                        <List.Item
-                            key={index}
-                            title={location.name}
-                            description={location.description}
-                            left={props => <List.Icon {...props} icon="account" />}
-                            onPress={() => console.log('Pressed', location.name)}
-                        />
-                    ))}
-                    {locations.map((location, index) => (
+                    {preparedLocations.map((location, index) => (
                         <List.Item
                             key={index}
                             title={location.name}

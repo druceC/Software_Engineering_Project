@@ -35,4 +35,7 @@ yarn-error.*
 *.tsbuildinfo
 
 #vscode
-.vscode/settings.json
+.vscode
+
+#.idea
+.idea/vcs.xml
