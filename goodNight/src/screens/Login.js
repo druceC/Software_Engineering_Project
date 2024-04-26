@@ -23,7 +23,7 @@ export const Login = () => {
             try {
                 const response = await auth().signInWithEmailAndPassword(email, password);
 
-                if (response.user) nav.replace("sleepTrackMenu");
+                if (response.user) nav.replace("LandingPage");
             }
             catch (error) {
                 Alert.alert('Error', error.message);

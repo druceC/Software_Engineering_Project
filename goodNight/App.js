@@ -29,7 +29,7 @@ export default function App() {
       >
 
         <Stack.Screen
-          name="Good Night Home Page 🌃"
+          name="LandingPage"
           component={LandingPage}
           screenOptions={{
             headerShown: false,
