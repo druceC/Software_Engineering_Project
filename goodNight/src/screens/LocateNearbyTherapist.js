@@ -10,24 +10,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 export const LocateTherapistMenu = () => {
     const [errorMsg, setErrorMsg] = useState(null);
-    const [locations, setLocations] = useState([
-
-    ]); //Array for storing locations of therapists -> 0 entry will be user location
-
-    const preparedLocations = [
-        // Example therapists' locations
-        { id: '1', name: 'Therapist A', latitude: 24.5349, longitude: 54.4575, description: 'Specializes in Overwatch.' },
-        { id: '2', name: 'Therapist B', latitude: 24.5154, longitude: 54.4372, description: 'Expert in Zelda.' },
-        { id: '3', name: 'Therapist C', latitude: 24.5245, longitude: 54.4332, description: 'Resident Evil specialist.' },
-        { id: '4', name: 'Therapist D', latitude: 24.5333, longitude: 54.4492, description: 'CSGO Master Rank' },
-        { id: '5', name: 'Therapist E', latitude: 24.5146, longitude: 54.4685, description: 'Therapist from Cyberpunk 2077' },
-        { id: '6', name: 'Therapist F', latitude: 24.5288, longitude: 54.4176, description: 'Especially good at playing Genshin' },
-        { id: '7', name: 'Therapist G', latitude: 24.5763, longitude: 54.4348, description: 'Self Learnt Therapist' },
-    ];
+    const [locations, setLocations] = useState([]);
 
     const [region, setRegion] = useState({
-        latitude: 37.7749,
-        longitude: -122.4194,
+        latitude: 24.524187,
+        longitude: 54.434349,
         latitudeDelta: 0.0922,
         longitudeDelta: 0.0421,
     });
@@ -118,7 +105,7 @@ export const LocateTherapistMenu = () => {
                 showsUserLocation={true}
                 showsMyLocationButton={true}
             >
-                {preparedLocations.map(location => (
+                {locations.map(location => (
                     <Marker
                         key={location.id}
                         coordinate={{ latitude: location.latitude, longitude: location.longitude }}
@@ -130,7 +117,7 @@ export const LocateTherapistMenu = () => {
             </MapView>
             <SafeAreaView style={styles.listContainer}>
                 <ScrollView>
-                    {preparedLocations.filter(location => location.id > 0).map((location, index) => (
+                    {locations.map((location, index) => (
                         <List.Item
                             key={index}
                             title={location.name}
