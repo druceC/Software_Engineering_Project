@@ -105,7 +105,7 @@ export const SleepTrackMenu = () => {
       console.log('User ID:', user.uid); // You can access the user's UID
       console.log('User Email:', user.email); // You can access the user's email
     }
-    const { sleepStart, sleepEnd, wakeTimes, remPeriods } = data;
+    const { sleepStart, sleepEnd, wakeTimes, remPeriods, lightSleepCycles, totalDuration } = data;
     // Only attempt to save data if both sleepStart and sleepEnd are not null
     if (sleepStart && sleepEnd) {
       try {
@@ -116,6 +116,8 @@ export const SleepTrackMenu = () => {
           wakeTimes,
           totalDuration: (sleepEnd.getTime() - sleepStart.getTime()) / 1000, // Calculate duration in seconds
           remPeriods,
+          lightSleepCycles,
+          totalDuration,
           createdAt: firestore.FieldValue.serverTimestamp(),
         });
         Alert.alert('Success', 'Sleep data saved successfully');
@@ -138,13 +140,16 @@ export const SleepTrackMenu = () => {
       setIsTracking(false);
       setSleepData(prevState => {
         const now = new Date();
-        const remPeriods = analyzeSleepCycles(prevState.movements, prevState.timestamps);
-  
+        const { remPeriods, lightSleepCycles } = analyzeSleepCycles(prevState.movements, prevState.timestamps);
+        const totalDuration = duration;
+        
         const updatedData = {
           ...prevState,
           sleepEnd: now,
           asleep: false,
-          remPeriods, 
+          remPeriods: remPeriods || [],
+          lightSleepCycles: lightSleepCycles || [], 
+          totalDuration,
         };
         saveSleepData(updatedData);
         return updatedData;
@@ -153,39 +158,66 @@ export const SleepTrackMenu = () => {
   };  
   
   function analyzeSleepCycles(movements, timestamps) {
-    const remThreshold = 0.8; // set to 8 for now just to test
-    let remCycles = [];
-    let isREM = false;
-    let remStartIndex = null;
+    const remThreshold = 0.8; // Threshold for REM sleep
+    const lightSleepThreshold = 2.0; // Higher threshold for light sleep
+    let sleepCycles = {
+        remCycles: [],
+        lightSleepCycles: []
+    };
+
+    let isREM = false, isLightSleep = false;
+    let remStartIndex = null, lightSleepStartIndex = null;
 
     movements.forEach((movement, index) => {
+        // Handle REM sleep detection
         if (movement <= remThreshold && !isREM) {
-            // Potential start of a REM cycle
             isREM = true;
             remStartIndex = index;
         } else if (movement > remThreshold && isREM) {
-            // End of a REM cycle
             isREM = false;
-            if (remStartIndex != null) {
-                remCycles.push({
+            if (remStartIndex !== null) {
+                sleepCycles.remCycles.push({
                     start: timestamps[remStartIndex],
                     end: timestamps[index],
                     duration: (timestamps[index] - timestamps[remStartIndex]) / 1000 // Duration in seconds
                 });
             }
         }
+
+        // Handle light sleep detection
+        if (movement <= lightSleepThreshold && !isLightSleep) {
+            isLightSleep = true;
+            lightSleepStartIndex = index;
+        } else if (movement > lightSleepThreshold && isLightSleep) {
+            isLightSleep = false;
+            if (lightSleepStartIndex !== null) {
+                sleepCycles.lightSleepCycles.push({
+                    start: timestamps[lightSleepStartIndex],
+                    end: timestamps[index],
+                    duration: (timestamps[index] - timestamps[lightSleepStartIndex]) / 1000 // Duration in seconds
+                });
+            }
+        }
     });
 
-    // Handle case where the last detected movement still suggests REM sleep
+    // Handle case where the last detected movement still suggests REM or light sleep
     if (isREM) {
-        remCycles.push({
+        sleepCycles.remCycles.push({
             start: timestamps[remStartIndex],
             end: timestamps[movements.length - 1],
             duration: (timestamps[movements.length - 1] - timestamps[remStartIndex]) / 1000 // Duration in seconds
         });
     }
-    return remCycles;
-  }
+    if (isLightSleep) {
+        sleepCycles.lightSleepCycles.push({
+            start: timestamps[lightSleepStartIndex],
+            end: timestamps[movements.length - 1],
+            duration: (timestamps[movements.length - 1] - timestamps[lightSleepStartIndex]) / 1000 // Duration in seconds
+        });
+    }
+
+    return sleepCycles;
+}
 
   const formatTime = (time) => {
     return time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
