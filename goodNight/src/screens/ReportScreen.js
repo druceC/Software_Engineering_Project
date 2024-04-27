@@ -1,78 +1,119 @@
-import { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { View, Text, ScrollView, Dimensions, ActivityIndicator, StyleSheet } from 'react-native';
+import { VictoryScatter, VictoryChart, VictoryAxis, VictoryTheme } from 'victory-native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
-import { LineChart } from 'react-native-chart-kit';
-import { Dimensions } from 'react-native';
+
+const processChartData = (entry) => {
+    console.log(VictoryTheme);
+    const sleepStart = entry.sleepStart ? new Date(entry.sleepStart.seconds * 1000) : null;
+    const sleepEnd = entry.sleepEnd ? new Date(entry.sleepEnd.seconds * 1000) : null;
+    const totalDuration = sleepStart && sleepEnd ? (sleepEnd - sleepStart) / 1000 / 60 : 0; // duration in minutes
+
+    const states = [
+        { state: 'Awake', value: 1, count: entry.wakeTimes.length },
+        { state: 'Light Sleep', value: 2, count: entry.lightSleepCycles.length },
+        { state: 'Deep Sleep', value: 3, count: entry.remPeriods.length }
+    ];
+
+    return states.map(state => ({
+        x: totalDuration,
+        y: state.value,
+        label: `${state.state} (${state.count})`
+    }));
+};
 
 export const ReportScreen = () => {
-  const [data, setData] = useState([]);
+    const [sleepData, setSleepData] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-      fetchData().then(fetchedData => setData(fetchedData));
+    useEffect(() => {
+      // Assuming user is logged in and exists
+      const user = auth().currentUser;
+      if (user) {
+          const unsubscribe = firestore()
+              .collection('sleepData')
+              .where('uid', '==', user.uid)
+              .orderBy('createdAt', 'desc')
+              .onSnapshot(querySnapshot => {
+                  const data = [];
+                  querySnapshot.forEach(doc => {
+                      const docData = doc.data();
+                      docData.lightSleepCycles = docData.lightSleepCycles || [];
+                      docData.remPeriods = docData.remPeriods || [];
+                      docData.wakeTimes = docData.wakeTimes || [];
+                      data.push(docData);
+                  });
+                  setSleepData(data);
+                  setLoading(false);
+              }, error => {
+                  console.error("Failed to fetch sleep data:", error);
+                  setLoading(false);
+              });
+  
+          return () => unsubscribe();
+      }
   }, []);
 
-  const chartData = {
-      labels: data.map(d => new Date(d.createdAt.seconds * 1000).toLocaleDateString()), // Adjust according to your data structure
-      datasets: [
-          {
-              data: data.map(d => d.totalDuration), // Example, map your actual sleep stage values
-              color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`, // optional
-              strokeWidth: 2 // optional
-          }
-      ],
-      legend: ["Sleep Duration"] // optional
+    return (
+      <ScrollView style={styles.container}>
+      {loading ? (
+          <ActivityIndicator size="large" color="#0000ff" />
+      ) : sleepData.length > 0 ? (
+          sleepData.map((entry, index) => (
+              <View key={index} style={styles.chartContainer}>
+                  <Text style={styles.headerText}>
+                      Sleep Data from {new Date(entry.createdAt.seconds * 1000).toLocaleDateString()}
+                  </Text>
+                    <VictoryChart
+                        width={Dimensions.get('window').width - 20}
+                        height={300}
+                        theme={VictoryTheme.material}
+                        domainPadding={{ x: 50, y: [0, 20] }}
+                    >
+                        <VictoryAxis
+                            label="Total Duration (minutes)"
+                            style={{
+                                axisLabel: { padding: 30 }
+                            }}
+                        />
+                        <VictoryAxis
+                            dependentAxis
+                            label="Sleep State"
+                            tickValues={[1, 2, 3]}
+                            tickFormat={["Awake", "Light Sleep", "Deep Sleep"]}
+                            style={{
+                                axisLabel: { padding: 40 }
+                            }}
+                        />
+                        <VictoryScatter
+                            data={processChartData(entry)}
+                            size={5}
+                            style={{ data: { fill: "#c43a31" } }}
+                            labels={({ datum }) => datum.label}
+                        />
+                    </VictoryChart>
+                    </View>
+            ))
+        ) : (
+            <Text>No sleep data available</Text>
+        )}
+    </ScrollView>
+    );
   };
 
-  const fetchData = async () => {
-    const user = auth().currentUser;
-    const uid = user ? user.uid : null;
-    const data = [];
-
-    if (uid) {
-        const startOfDay = new Date();
-        startOfDay.setHours(0, 0, 0, 0);
-
-        const querySnapshot = await firestore()
-            .collection('sleepData')
-            .where('uid', '==', uid)
-            .where('createdAt', '>=', startOfDay)
-            .orderBy('createdAt', 'desc')
-            .limit(1)
-            .get();
-
-        querySnapshot.forEach((doc) => {
-            data.push(doc.data());
-        });
-    }
-    return data;
-  };
-
-  return (
-      <LineChart
-          data={chartData}
-          width={Dimensions.get('window').width} // from react-native
-          height={220}
-          chartConfig={{
-              backgroundColor: '#e26a00',
-              backgroundGradientFrom: '#fb8c00',
-              backgroundGradientTo: '#ffa726',
-              decimalPlaces: 2, // optional, defaults to 2dp
-              color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-              labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-              style: {
-                  borderRadius: 16
-              },
-              propsForDots: {
-                  r: '6',
-                  strokeWidth: '2',
-                  stroke: '#ffa726'
-              }
-          }}
-          bezier
-          style={{
-              marginVertical: 8,
-              borderRadius: 16
-          }}
-      />
-  );
-};
+  const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        padding: 10,
+    },
+    chartContainer: {
+        alignItems: 'center',
+        marginVertical: 20,
+    },
+    headerText: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 10,
+    },
+});
