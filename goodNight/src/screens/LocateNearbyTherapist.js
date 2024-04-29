@@ -19,6 +19,9 @@ export const LocateTherapistMenu = () => {
         longitudeDelta: 0.0421,
     });
 
+    //24.5123
+    //54.4123
+
     const onItemPress = (location) => {
         setRegion({
             latitude: location.latitude,

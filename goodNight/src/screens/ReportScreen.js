@@ -1,119 +1,117 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, Dimensions, ActivityIndicator, StyleSheet } from 'react-native';
-import { VictoryScatter, VictoryChart, VictoryAxis, VictoryTheme } from 'victory-native';
+import React, { useState } from 'react';
+import { View, Text, Button, StyleSheet, Alert } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
-
-const processChartData = (entry) => {
-    console.log(VictoryTheme);
-    const sleepStart = entry.sleepStart ? new Date(entry.sleepStart.seconds * 1000) : null;
-    const sleepEnd = entry.sleepEnd ? new Date(entry.sleepEnd.seconds * 1000) : null;
-    const totalDuration = sleepStart && sleepEnd ? (sleepEnd - sleepStart) / 1000 / 60 : 0; // duration in minutes
-
-    const states = [
-        { state: 'Awake', value: 1, count: entry.wakeTimes.length },
-        { state: 'Light Sleep', value: 2, count: entry.lightSleepCycles.length },
-        { state: 'Deep Sleep', value: 3, count: entry.remPeriods.length }
-    ];
-
-    return states.map(state => ({
-        x: totalDuration,
-        y: state.value,
-        label: `${state.state} (${state.count})`
-    }));
-};
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 export const ReportScreen = () => {
-    const [sleepData, setSleepData] = useState([]);
-    const [loading, setLoading] = useState(true);
+  const [date, setDate] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [sleepData, setSleepData] = useState(null);
 
-    useEffect(() => {
-      // Assuming user is logged in and exists
-      const user = auth().currentUser;
-      if (user) {
-          const unsubscribe = firestore()
-              .collection('sleepData')
-              .where('uid', '==', user.uid)
-              .orderBy('createdAt', 'desc')
-              .onSnapshot(querySnapshot => {
-                  const data = [];
-                  querySnapshot.forEach(doc => {
-                      const docData = doc.data();
-                      docData.lightSleepCycles = docData.lightSleepCycles || [];
-                      docData.remPeriods = docData.remPeriods || [];
-                      docData.wakeTimes = docData.wakeTimes || [];
-                      data.push(docData);
-                  });
-                  setSleepData(data);
-                  setLoading(false);
-              }, error => {
-                  console.error("Failed to fetch sleep data:", error);
-                  setLoading(false);
-              });
-  
-          return () => unsubscribe();
-      }
-  }, []);
-
-    return (
-      <ScrollView style={styles.container}>
-      {loading ? (
-          <ActivityIndicator size="large" color="#0000ff" />
-      ) : sleepData.length > 0 ? (
-          sleepData.map((entry, index) => (
-              <View key={index} style={styles.chartContainer}>
-                  <Text style={styles.headerText}>
-                      Sleep Data from {new Date(entry.createdAt.seconds * 1000).toLocaleDateString()}
-                  </Text>
-                    <VictoryChart
-                        width={Dimensions.get('window').width - 20}
-                        height={300}
-                        theme={VictoryTheme.material}
-                        domainPadding={{ x: 50, y: [0, 20] }}
-                    >
-                        <VictoryAxis
-                            label="Total Duration (minutes)"
-                            style={{
-                                axisLabel: { padding: 30 }
-                            }}
-                        />
-                        <VictoryAxis
-                            dependentAxis
-                            label="Sleep State"
-                            tickValues={[1, 2, 3]}
-                            tickFormat={["Awake", "Light Sleep", "Deep Sleep"]}
-                            style={{
-                                axisLabel: { padding: 40 }
-                            }}
-                        />
-                        <VictoryScatter
-                            data={processChartData(entry)}
-                            size={5}
-                            style={{ data: { fill: "#c43a31" } }}
-                            labels={({ datum }) => datum.label}
-                        />
-                    </VictoryChart>
-                    </View>
-            ))
-        ) : (
-            <Text>No sleep data available</Text>
-        )}
-    </ScrollView>
-    );
+  // Code for date picking -> uses android DateTimePicker
+  const onChange = (event, selectedDate) => {
+    setShowDatePicker(false);
+    if (selectedDate) {
+      const currentDate = selectedDate;
+      setDate(currentDate);
+      fetchSleepData(currentDate);
+    }
   };
 
-  const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 10,
-    },
-    chartContainer: {
-        alignItems: 'center',
-        marginVertical: 20,
-    },
-    headerText: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginBottom: 10,
-    },
+  const showDatepicker = () => {
+    setShowDatePicker(true);
+  };
+
+  const fetchSleepData = async (selectedDate) => {
+    const user = auth().currentUser;
+    if (!user) {
+      Alert.alert('Error', 'You must be logged in to view sleep data.');
+      return;
+    }
+  
+    const startDate = new Date(selectedDate.setHours(0, 0, 0, 0));
+    const endDate = new Date(selectedDate.setHours(23, 59, 59, 999));
+  
+    try {
+      const snapshot = await firestore()
+      // Searching for data from firebase where
+      // user id == currently logged in user
+      // Exists in Firebase
+        .collection('sleepData')
+        .where('uid', '==', user.uid)
+        .where('createdAt', '>=', firestore.Timestamp.fromDate(startDate))
+        .where('createdAt', '<=', firestore.Timestamp.fromDate(endDate))
+        .get();
+  
+      const data = snapshot.docs.map(doc => {
+        const docData = doc.data();
+        return {
+          // Fetches the following data from firestore
+          sleepStart: docData.sleepStart,
+          sleepEnd: docData.sleepEnd,
+          lightSleepCycles: docData.lightSleepCycles || [],
+          remPeriods: docData.remPeriods || [],
+          wakeTimes: docData.wakeTimes || [],
+          totalDuration: docData.totalDuration || 0,
+        };
+      });
+      setSleepData(data);
+    } catch (error) {
+      console.error('Error fetching sleep data:', error);
+      Alert.alert('Error', 'Failed to fetch sleep data.');
+    }
+  };  
+
+  return (
+    <View style={styles.container}>
+    <Button onPress={showDatepicker} title="Choose a date" />
+    {showDatePicker && (
+      <DateTimePicker
+        value={date}
+        mode="date"
+        display="default"
+        onChange={onChange}
+      />
+    )}
+    {sleepData && sleepData.map((entry, index) => (
+      <View key={index} style={styles.dataContainer}>
+        {/* Code for printing data on screen */}
+        <Text>Sleep Data for {new Date(entry.sleepStart.seconds * 1000).toLocaleDateString()}:</Text>
+        <Text>Sleep Start: {new Date(entry.sleepStart.seconds * 1000).toLocaleTimeString()}</Text>
+        <Text>Sleep End: {new Date(entry.sleepEnd.seconds * 1000).toLocaleTimeString()}</Text>
+        <Text>Total Duration: {entry.totalDuration} seconds</Text>
+        <Text>Light Sleep Cycles:</Text>
+        {entry.lightSleepCycles.map((cycle, cycleIndex) => (
+          <Text key={cycleIndex}>
+            Start: {new Date(cycle.start.seconds * 1000).toLocaleTimeString()}, 
+            End: {new Date(cycle.end.seconds * 1000).toLocaleTimeString()}
+          </Text>
+        ))}
+        <Text>REM Periods:</Text>
+        {entry.remPeriods.map((period, periodIndex) => (
+          <Text key={periodIndex}>
+            Start: {new Date(period.start.seconds * 1000).toLocaleTimeString()}, 
+            End: {new Date(period.end.seconds * 1000).toLocaleTimeString()}
+          </Text>
+        ))}
+        <Text>Wake Times:</Text>
+        {entry.wakeTimes.map((wakeTime, wakeIndex) => (
+          <Text key={wakeIndex}>{new Date(wakeTime.seconds * 1000).toLocaleTimeString()}</Text>
+        ))}
+      </View>
+    ))}
+  </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  dataContainer: {
+    marginTop: 20,
+  },
 });
