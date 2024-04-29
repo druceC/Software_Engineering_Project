@@ -12,7 +12,8 @@ import { Login } from './Login'
 import { SleepTrackMenu } from './SleepTrack';
 import { LocateTherapistMenu } from './LocateNearbyTherapist';
 import { ProfilePage } from './ProfilePage';
-import { TherapySessionMenu } from './TherapySessionMenu';
+// import { TherapySessionMenu } from './TherapySessionMenu';
+import { CBTIQuestionnairePage } from './Questionnaire';
 import { ReportScreen } from './ReportScreen';
 
 
@@ -102,8 +103,8 @@ export const LandingPage = () => {
 
       <Tab.Screen
         // Testing Screen Tab Content
-        name="TherapySession"
-        component={TherapySessionMenu}
+        name="CBTIQuestionnaire"
+        component={CBTIQuestionnairePage}
         options={{
           tabBarLabel: 'Evaluation',// Tab Name
           tabBarIcon: ({ color, size }) => {
