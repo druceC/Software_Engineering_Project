@@ -1,14 +1,29 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { ScrollView, View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Avatar, Title, Paragraph, Button, Text, List, useTheme, Card, TouchableRipple } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { TestScreen } from './TestingScreen';
 import { useNavigation } from "@react-navigation/native";
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 
 const ProfilePage = () => {
     // This is to use the theme colors from react-native-paper
     const { colors } = useTheme();
     const nav = useNavigation();
+    const user = auth().currentUser;
+    const [username, setUsername] = useState();
+
+    const fetchUsername = async (uid) => {
+        const querySnapshot = await firestore().collection('usernames').where('uid', '==', uid).get();
+        const userDoc = querySnapshot.docs[0];
+        console.log('Username:', userDoc.data().username);
+        return userDoc.data().username; 
+    };
+    fetchUsername(user.uid)
+        .then(username => {
+            setUsername(username);
+        })
 
     return (
         <ScrollView style={styles.container}>
@@ -18,8 +33,8 @@ const ProfilePage = () => {
                     onPress={() => { }}> 
                     {/* action of pressing the profile card */}
                     <Card.Title
-                        title={"Username"}
-                        subtitle={"example@email.com"}
+                        title={username}
+                        subtitle={user.email}
                         titleStyle={styles.cardTitle}
                         subtitleStyle={styles.cardSubtitle}
                         left={(props) => <Avatar.Image {...props} size={60} source={require('../images/logo.png')} />}
