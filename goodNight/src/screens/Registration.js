@@ -6,9 +6,10 @@ import db from "@react-native-firebase/database";
 import { Icon, TextInput } from 'react-native-paper';
 import { Button } from 'react-native';
 import { Button as PaperButton } from 'react-native-paper';
+import firestore from '@react-native-firebase/firestore';
 
 export const Register = () => {
-    const [name, setName] = React.useState("");
+    const [username, setUsername] = React.useState("");
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
     const [confirmPassword, setConfirmPassword] = React.useState("");
@@ -24,9 +25,13 @@ export const Register = () => {
         if (email && password) {
             try {
                 const response = await auth().createUserWithEmailAndPassword(email, password);
-
+                const user = auth().currentUser;
                 if (response.user) {
-                    await createProfile(response);
+                    console.log(user.uid);
+                    await firestore().collection('usernames').add({
+                        uid: user.uid,
+                        username: username
+                    })
                     nav.replace("LandingPage");
                 }
             }
@@ -57,8 +62,8 @@ export const Register = () => {
                         style={styles.loginTextInput}
                         mode='outlined' // Outlined style for the text input.
                         label='Username' // Placeholder text shown when the input is empty.
-                        value={name} // Controlled value of the input.
-                        onChangeText={setName} // Function to update the state when the input changes.
+                        value={username} // Controlled value of the input.
+                        onChangeText={setUsername} // Function to update the state when the input changes.
                     />
                     <TextInput
                         style={styles.loginTextInput}
