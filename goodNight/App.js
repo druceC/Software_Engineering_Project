@@ -23,7 +23,7 @@ export default function App() {
   // List of different Screens for the app
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home Page"
+      <Stack.Navigator initialRouteName="LoginScreen"
         screenOptions={{
           headerMode: 'screen',
           headerShown: false,
