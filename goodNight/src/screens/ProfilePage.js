@@ -12,7 +12,7 @@ const ProfilePage = () => {
     const { colors } = useTheme();
     const nav = useNavigation();
     const user = auth().currentUser;
-    const [username, setUsername] = useState();
+    const [username, setUsername] = useState('Loading');
 
     const fetchUsername = async (uid) => {
         const querySnapshot = await firestore().collection('usernames').where('uid', '==', uid).get();
