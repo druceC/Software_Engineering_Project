@@ -421,8 +421,8 @@ const styles = StyleSheet.create({
     marginBottom: 40, // Slightly reduced bottom margin
   },
   button: {
-    width: 220,
-    height: 220,
+    width: 230,
+    height: 230,
     borderRadius: 110,
     backgroundColor: '#2D3748',
     justifyContent: 'center',
@@ -444,7 +444,7 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
     borderRadius: 100,
-    backgroundColor: '#4A5568',
+    backgroundColor: '#5A607D',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -458,9 +458,9 @@ const styles = StyleSheet.create({
     width: '80%', // Reduced the width for the music container
     alignItems: 'center',
     backgroundColor: '#2D3748',
-    borderRadius: 15,
-    paddingHorizontal: 20,
-    paddingVertical: 15, // Reduced padding for a slimmer bar
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 10, // Reduced padding for a slimmer bar
     elevation: 5,
     shadowColor: '#000',
     shadowOffset: {
@@ -475,10 +475,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#4A5568',
-    paddingHorizontal: 15, // Slightly reduced horizontal padding
+    paddingHorizontal: 10, // Slightly reduced horizontal padding
     paddingVertical: 10, // Reduced vertical padding
     borderRadius: 10,
-    marginBottom: 15, // Increased margin for spacing
+    marginBottom: 10, // Increased margin for spacing
     elevation: 3,
     shadowColor: '#000',
     shadowOffset: {
@@ -490,10 +490,10 @@ const styles = StyleSheet.create({
   },
   musicButtonText: {
     fontFamily: 'monospace',
-    fontSize: 18,
+    fontSize: 15,
     fontWeight: '600',
     color: '#FFFFFF',
-    marginLeft: 15,
+    marginLeft: 10,
   },
   musicSlider: {
     width: '90%', // Reduced width for a smaller slider
