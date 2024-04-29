@@ -1,14 +1,31 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ScrollView, View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Avatar, Title, Paragraph, Button, Text, List, useTheme, Card, TouchableRipple } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { TestScreen } from './TestingScreen';
 import { useNavigation } from "@react-navigation/native";
+import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
 
 const ProfilePage = () => {
-    // This is to use the theme colors from react-native-paper
-    const { colors } = useTheme();
+    const { colors } = useTheme();  // Use theme colors from react-native-paper
     const nav = useNavigation();
+    const [username, setUsername] = useState('Loading...');
+    const [userEmail, setUserEmail] = useState('Loading...');
+
+    useEffect(() => {
+        const user = auth().currentUser;  // Get the current user from Firebase authentication
+        if (user) {
+            // Set the username and email from the user object
+            setUsername(user.email || 'No username');  // Fallback to 'No username' if displayName is null
+            setUserEmail(user.email);
+        } else {
+            // Handle the case where no user is logged in
+            console.log('No user is signed in.');
+            setUsername('Guest');  // Set username as 'Guest' or any other fallback
+            setUserEmail('No email available');  // Set email to a fallback
+        }
+    }, []);
 
     return (
         <ScrollView style={styles.container}>
@@ -18,8 +35,8 @@ const ProfilePage = () => {
                     onPress={() => { }}> 
                     {/* action of pressing the profile card */}
                     <Card.Title
-                        title={"Username"}
-                        subtitle={"example@email.com"}
+                        title={username}
+                        subtitle={userEmail}
                         titleStyle={styles.cardTitle}
                         subtitleStyle={styles.cardSubtitle}
                         left={(props) => <Avatar.Image {...props} size={60} source={require('../images/logo.png')} />}

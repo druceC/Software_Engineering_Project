@@ -16,7 +16,7 @@ export const SleepTrackMenu = () => {
     sleepStart: null,
     sleepEnd: null,
     wakeTimes: [],
-    movements: [],  
+    movements: [],
     timestamps: []
   });
   const [duration, setDuration] = useState(0);
@@ -24,8 +24,9 @@ export const SleepTrackMenu = () => {
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
   const [musicProgress, setMusicProgress] = useState(0);
   const [musicDuration, setMusicDuration] = useState(0);
-  const soundRef = useRef(null);  
-  
+  const soundRef = useRef(null);
+  const animationRef = useRef(null); // Reference to store the animation
+
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
@@ -61,21 +62,21 @@ export const SleepTrackMenu = () => {
       accelerometerSubscription = Accelerometer.addListener(({ x, y, z }) => {
         const movement = Math.sqrt(x * x + y * y + z * z);
         const asleep = movement < 1.5;
-        
+
         console.log(asleep);
 
         setSleepData(prevState => {
-          let updates = {...prevState};
+          let updates = { ...prevState };
 
           if (asleep !== prevState.asleep) {
             if (asleep && !trigger) {
-                // Set sleepStart only if it's null and the state is transitioning to asleep
-                updates.sleepStart = new Date();
-                trigger = true;
+              // Set sleepStart only if it's null and the state is transitioning to asleep
+              updates.sleepStart = new Date();
+              trigger = true;
             }
             if (!asleep && prevState.asleep) {
-                // Log the wake time only if transitioning from asleep to awake
-                updates.wakeTimes = [...prevState.wakeTimes, new Date()];
+              // Log the wake time only if transitioning from asleep to awake
+              updates.wakeTimes = [...prevState.wakeTimes, new Date()];
             }
           }
 
@@ -97,7 +98,7 @@ export const SleepTrackMenu = () => {
     };
   }, [isTracking]);
 
-  
+
   const saveSleepData = async (data) => {
     const user = auth().currentUser;
 
@@ -142,7 +143,7 @@ export const SleepTrackMenu = () => {
         const now = new Date();
         const { remPeriods, lightSleepCycles } = analyzeSleepCycles(prevState.movements, prevState.timestamps);
         const totalDuration = duration;
-        
+
         const updatedData = {
           ...prevState,
           sleepEnd: now,
@@ -150,21 +151,25 @@ export const SleepTrackMenu = () => {
           movements: [],
           timestamps: [],
           remPeriods: remPeriods,
-          lightSleepCycles: lightSleepCycles, 
+          lightSleepCycles: lightSleepCycles,
           totalDuration,
         };
         saveSleepData(updatedData);
         return updatedData;
       });
+      if (animationRef.current) {
+        animationRef.current.stop(); // Stop the animation
+        animationRef.current = null; // Reset the reference
+      }
     }
-  };  
-  
+  };
+
   function analyzeSleepCycles(movements, timestamps) {
     const remThreshold = 1.9; // Threshold for REM sleep
     const lightSleepThreshold = 2.0; // Higher threshold for light sleep
     let sleepCycles = {
-        remPeriods: [],
-        lightSleepCycles: []
+      remPeriods: [],
+      lightSleepCycles: []
     };
 
     let isREM = false, isLightSleep = false;
@@ -172,53 +177,53 @@ export const SleepTrackMenu = () => {
 
     movements.forEach((movement, index) => {
       console.log(`Index: ${index}, Movement: ${movement}, isREM: ${isREM}, isLightSleep: ${isLightSleep}`);
-        // Handle REM sleep detection
-        if (movement <= remThreshold && !isREM) {
-            isREM = true;
-            remStartIndex = index;
-        } else if (movement > remThreshold && isREM) {
-            isREM = false;
-            if (remStartIndex !== null) {
-                sleepCycles.remPeriods.push({
-                    start: timestamps[remStartIndex],
-                    end: timestamps[index],
-                    duration: (timestamps[index] - timestamps[remStartIndex]) / 1000 // Duration in seconds
-                });
-                remStartIndex = null; // Reset REM start index after logging the cycle
-            }
+      // Handle REM sleep detection
+      if (movement <= remThreshold && !isREM) {
+        isREM = true;
+        remStartIndex = index;
+      } else if (movement > remThreshold && isREM) {
+        isREM = false;
+        if (remStartIndex !== null) {
+          sleepCycles.remPeriods.push({
+            start: timestamps[remStartIndex],
+            end: timestamps[index],
+            duration: (timestamps[index] - timestamps[remStartIndex]) / 1000 // Duration in seconds
+          });
+          remStartIndex = null; // Reset REM start index after logging the cycle
         }
+      }
 
-        // Handle light sleep detection
-        if (movement <= lightSleepThreshold && !isLightSleep) {
-            isLightSleep = true;
-            lightSleepStartIndex = index;
-        } else if (movement > lightSleepThreshold && isLightSleep) {
-            isLightSleep = false;
-            if (lightSleepStartIndex !== null) {
-                sleepCycles.lightSleepCycles.push({
-                    start: timestamps[lightSleepStartIndex],
-                    end: timestamps[index],
-                    duration: (timestamps[index] - timestamps[lightSleepStartIndex]) / 1000 // Duration in seconds
-                });
-                lightSleepStartIndex = null; // Reset light sleep start index after logging the cycle
-            }
+      // Handle light sleep detection
+      if (movement <= lightSleepThreshold && !isLightSleep) {
+        isLightSleep = true;
+        lightSleepStartIndex = index;
+      } else if (movement > lightSleepThreshold && isLightSleep) {
+        isLightSleep = false;
+        if (lightSleepStartIndex !== null) {
+          sleepCycles.lightSleepCycles.push({
+            start: timestamps[lightSleepStartIndex],
+            end: timestamps[index],
+            duration: (timestamps[index] - timestamps[lightSleepStartIndex]) / 1000 // Duration in seconds
+          });
+          lightSleepStartIndex = null; // Reset light sleep start index after logging the cycle
         }
+      }
     });
 
     // Handle case where the last detected movement still suggests REM or light sleep
     if (isREM && remStartIndex !== null) {
-        sleepCycles.remPeriods.push({
-            start: timestamps[remStartIndex],
-            end: timestamps[movements.length - 1],
-            duration: (timestamps[movements.length - 1] - timestamps[remStartIndex]) / 1000 // Duration in seconds
-        });
+      sleepCycles.remPeriods.push({
+        start: timestamps[remStartIndex],
+        end: timestamps[movements.length - 1],
+        duration: (timestamps[movements.length - 1] - timestamps[remStartIndex]) / 1000 // Duration in seconds
+      });
     }
     if (isLightSleep && lightSleepStartIndex !== null) {
-        sleepCycles.lightSleepCycles.push({
-            start: timestamps[lightSleepStartIndex],
-            end: timestamps[movements.length - 1],
-            duration: (timestamps[movements.length - 1] - timestamps[lightSleepStartIndex]) / 1000 // Duration in seconds
-        });
+      sleepCycles.lightSleepCycles.push({
+        start: timestamps[lightSleepStartIndex],
+        end: timestamps[movements.length - 1],
+        duration: (timestamps[movements.length - 1] - timestamps[lightSleepStartIndex]) / 1000 // Duration in seconds
+      });
     }
 
     return sleepCycles;
@@ -242,7 +247,7 @@ export const SleepTrackMenu = () => {
   };
 
   const animateButton = () => {
-    Animated.loop(
+    const animation = Animated.loop(
       Animated.sequence([
         Animated.timing(buttonScale, {
           toValue: 1.2,
@@ -255,7 +260,9 @@ export const SleepTrackMenu = () => {
           useNativeDriver: true,
         }),
       ])
-    ).start();
+    );
+    animation.start();
+    animationRef.current = animation; // Store the animation controller
   };
 
   const playMusic = async () => {
