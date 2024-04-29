@@ -100,13 +100,19 @@ export const SleepTrackMenu = () => {
   
   const saveSleepData = async (data) => {
     const user = auth().currentUser;
-
+  
     if (user) {
-      console.log('User ID:', user.uid); // You can access the user's UID
-      console.log('User Email:', user.email); // You can access the user's email
+      console.log('User ID:', user.uid);
+      console.log('User Email:', user.email);
     }
     const { sleepStart, sleepEnd, wakeTimes, remPeriods, lightSleepCycles, totalDuration } = data;
-    // Only attempt to save data if both sleepStart and sleepEnd are not null
+  
+    const remDuration = remPeriods.reduce((total, period) => total + period.duration, 0);
+    const lightSleepDuration = lightSleepCycles.reduce((total, cycle) => total + cycle.duration, 0);
+  
+    const remPercentage = (remDuration / totalDuration) * 100;
+    const lightSleepPercentage = (lightSleepDuration / totalDuration) * 100;
+  
     if (sleepStart && sleepEnd) {
       try {
         await firestore().collection('sleepData').add({
@@ -114,16 +120,17 @@ export const SleepTrackMenu = () => {
           sleepStart,
           sleepEnd,
           wakeTimes,
-          totalDuration: (sleepEnd.getTime() - sleepStart.getTime()) / 1000, // Calculate duration in seconds
+          totalDuration,
           remPeriods,
           lightSleepCycles,
-          totalDuration,
+          remPercentage,
+          lightSleepPercentage,
           createdAt: firestore.FieldValue.serverTimestamp(),
         });
         Alert.alert('Success', 'Sleep data saved successfully');
         setSleepData(prevState => ({
           ...prevState,
-          wakeTimes: [] // Resetting wakeTimes to an empty array
+          wakeTimes: []
         }));
       } catch (error) {
         console.error('Error saving sleep data:', error);

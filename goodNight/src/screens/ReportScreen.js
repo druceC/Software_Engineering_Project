@@ -20,12 +20,14 @@ export const ReportScreen = () => {
   }, [date]);
 
   useEffect(() => {
-    if (selectedRange === 'weekly') {
+    if (selectedRange === 'daily') {
+      fetchSleepData(date);
+    } else if (selectedRange === 'weekly') {
       fetchWeeklyData(date);
     } else if (selectedRange === 'monthly') {
       fetchMonthlyData(date);
     }
-  }, [selectedRange, date]);
+  }, [selectedRange, date]); // Ensuring this runs when range or date changes
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
@@ -39,13 +41,13 @@ export const ReportScreen = () => {
       const startDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 0, 0, 0);
       const endDate = new Date(startDate);
       endDate.setDate(startDate.getDate() + 1);
-  
+    
       const snapshot = await firestore()
         .collection('sleepData')
         .where('sleepStart', '>=', startDate)
         .where('sleepStart', '<', endDate)
         .get();
-  
+    
       const rawData = snapshot.docs.map(doc => doc.data());
       setSleepData(rawData);
       setSleepQuality(calculateSleepQuality(rawData, 'daily'));
