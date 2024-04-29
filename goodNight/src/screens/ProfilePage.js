@@ -1,31 +1,28 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState} from 'react';
 import { ScrollView, View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Avatar, Title, Paragraph, Button, Text, List, useTheme, Card, TouchableRipple } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { TestScreen } from './TestingScreen';
 import { useNavigation } from "@react-navigation/native";
-import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 
 const ProfilePage = () => {
-    const { colors } = useTheme();  // Use theme colors from react-native-paper
+    // This is to use the theme colors from react-native-paper
+    const { colors } = useTheme();
     const nav = useNavigation();
-    const [username, setUsername] = useState('Loading...');
-    const [userEmail, setUserEmail] = useState('Loading...');
+    const user = auth().currentUser;
+    const [username, setUsername] = useState();
 
-    useEffect(() => {
-        const user = auth().currentUser;  // Get the current user from Firebase authentication
-        if (user) {
-            // Set the username and email from the user object
-            setUsername(user.email || 'No username');  // Fallback to 'No username' if displayName is null
-            setUserEmail(user.email);
-        } else {
-            // Handle the case where no user is logged in
-            console.log('No user is signed in.');
-            setUsername('Guest');  // Set username as 'Guest' or any other fallback
-            setUserEmail('No email available');  // Set email to a fallback
-        }
-    }, []);
+    const fetchUsername = async (uid) => {
+        const querySnapshot = await firestore().collection('usernames').where('uid', '==', uid).get();
+        const userDoc = querySnapshot.docs[0];
+        return userDoc.data().username; 
+    };
+    fetchUsername(user.uid)
+        .then(username => {
+            setUsername(username);
+        })
 
     return (
         <ScrollView style={styles.container}>
@@ -36,7 +33,7 @@ const ProfilePage = () => {
                     {/* action of pressing the profile card */}
                     <Card.Title
                         title={username}
-                        subtitle={userEmail}
+                        subtitle={user.email}
                         titleStyle={styles.cardTitle}
                         subtitleStyle={styles.cardSubtitle}
                         left={(props) => <Avatar.Image {...props} size={60} source={require('../images/logo.png')} />}

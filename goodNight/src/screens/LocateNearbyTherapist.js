@@ -4,7 +4,6 @@ import MapView, { Marker } from 'react-native-maps';
 import firestore from '@react-native-firebase/firestore';
 import * as Location from 'expo-location';
 import { Avatar, Button, Card, Text, List } from 'react-native-paper';
-// import { ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 
@@ -72,8 +71,10 @@ export const LocateTherapistMenu = () => {
                         name: data.name,
                         latitude: data.geolocation.latitude,
                         longitude: data.geolocation.longitude,
-                        description: data.description
+                        description: data.description,
+                        contact: data.contact
                     };
+                    
                 });
 
                 //console.log("Location fetched comparison:", therapists);
@@ -116,17 +117,22 @@ export const LocateTherapistMenu = () => {
                 ))}
             </MapView>
             <SafeAreaView style={styles.listContainer}>
-                <ScrollView>
-                    {locations.map((location, index) => (
+            <ScrollView>
+                {locations.map((location, index) => {
+                    if (index !== 0) {
+                    return (
                         <List.Item
-                            key={index}
-                            title={location.name}
-                            description={location.description}
-                            left={props => <List.Icon {...props} icon="account" />}
-                            right={() => <List.Icon icon="chevron-right" />}
-                            onPress={() => onItemPress(location)}
+                        key={index}
+                        title={location.name}
+                        description={location.description + "\nContact: " + location.contact}
+                        left={props => <List.Icon {...props} icon="account" />}
+                        right={() => <List.Icon icon="chevron-right" />}
+                        onPress={() => onItemPress(location)}
                         />
-                    ))}
+                    );
+                    }
+                    return null;
+                })}
                 </ScrollView>
             </SafeAreaView>
         </View>
