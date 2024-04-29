@@ -1,119 +1,161 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, Dimensions, ActivityIndicator, StyleSheet } from 'react-native';
-import { VictoryScatter, VictoryChart, VictoryAxis, VictoryTheme } from 'victory-native';
+import React, { useState } from 'react';
+import { View, Text, Button, StyleSheet, Alert, Modal, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
-
-const processChartData = (entry) => {
-    console.log(VictoryTheme);
-    const sleepStart = entry.sleepStart ? new Date(entry.sleepStart.seconds * 1000) : null;
-    const sleepEnd = entry.sleepEnd ? new Date(entry.sleepEnd.seconds * 1000) : null;
-    const totalDuration = sleepStart && sleepEnd ? (sleepEnd - sleepStart) / 1000 / 60 : 0; // duration in minutes
-
-    const states = [
-        { state: 'Awake', value: 1, count: entry.wakeTimes.length },
-        { state: 'Light Sleep', value: 2, count: entry.lightSleepCycles.length },
-        { state: 'Deep Sleep', value: 3, count: entry.remPeriods.length }
-    ];
-
-    return states.map(state => ({
-        x: totalDuration,
-        y: state.value,
-        label: `${state.state} (${state.count})`
-    }));
-};
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { LineChart } from 'react-native-chart-kit';
 
 export const ReportScreen = () => {
-    const [sleepData, setSleepData] = useState([]);
-    const [loading, setLoading] = useState(true);
+  const [date, setDate] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [sleepData, setSleepData] = useState([]);
 
-    useEffect(() => {
-      // Assuming user is logged in and exists
-      const user = auth().currentUser;
-      if (user) {
-          const unsubscribe = firestore()
-              .collection('sleepData')
-              .where('uid', '==', user.uid)
-              .orderBy('createdAt', 'desc')
-              .onSnapshot(querySnapshot => {
-                  const data = [];
-                  querySnapshot.forEach(doc => {
-                      const docData = doc.data();
-                      docData.lightSleepCycles = docData.lightSleepCycles || [];
-                      docData.remPeriods = docData.remPeriods || [];
-                      docData.wakeTimes = docData.wakeTimes || [];
-                      data.push(docData);
-                  });
-                  setSleepData(data);
-                  setLoading(false);
-              }, error => {
-                  console.error("Failed to fetch sleep data:", error);
-                  setLoading(false);
-              });
-  
-          return () => unsubscribe();
-      }
-  }, []);
-
-    return (
-      <ScrollView style={styles.container}>
-      {loading ? (
-          <ActivityIndicator size="large" color="#0000ff" />
-      ) : sleepData.length > 0 ? (
-          sleepData.map((entry, index) => (
-              <View key={index} style={styles.chartContainer}>
-                  <Text style={styles.headerText}>
-                      Sleep Data from {new Date(entry.createdAt.seconds * 1000).toLocaleDateString()}
-                  </Text>
-                    <VictoryChart
-                        width={Dimensions.get('window').width - 20}
-                        height={300}
-                        theme={VictoryTheme.material}
-                        domainPadding={{ x: 50, y: [0, 20] }}
-                    >
-                        <VictoryAxis
-                            label="Total Duration (minutes)"
-                            style={{
-                                axisLabel: { padding: 30 }
-                            }}
-                        />
-                        <VictoryAxis
-                            dependentAxis
-                            label="Sleep State"
-                            tickValues={[1, 2, 3]}
-                            tickFormat={["Awake", "Light Sleep", "Deep Sleep"]}
-                            style={{
-                                axisLabel: { padding: 40 }
-                            }}
-                        />
-                        <VictoryScatter
-                            data={processChartData(entry)}
-                            size={5}
-                            style={{ data: { fill: "#c43a31" } }}
-                            labels={({ datum }) => datum.label}
-                        />
-                    </VictoryChart>
-                    </View>
-            ))
-        ) : (
-            <Text>No sleep data available</Text>
-        )}
-    </ScrollView>
-    );
+  const onChange = (event, selectedDate) => {
+    const currentDate = selectedDate || date;
+    setShowDatePicker(Platform.OS === 'ios');
+    setDate(currentDate);
+    fetchSleepData(currentDate);
   };
 
-  const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 10,
+  const fetchSleepData = async (selectedDate) => {
+    const user = auth().currentUser;
+    if (!user) {
+      Alert.alert('Error', 'You must be logged in to view sleep data.');
+      return;
+    }
+
+    const startDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 0, 0, 0);
+    const endDate = new Date(startDate);
+    endDate.setDate(startDate.getDate() + 7); // Adjust to fetch data for one week
+
+    try {
+      const snapshot = await firestore()
+        .collection('sleepData')
+        .where('uid', '==', user.uid)
+        .where('createdAt', '>=', firestore.Timestamp.fromDate(startDate))
+        .where('createdAt', '<=', firestore.Timestamp.fromDate(endDate))
+        .orderBy('createdAt')
+        .get();
+
+      const data = snapshot.docs.map(doc => {
+        const docData = doc.data();
+        return {
+          label: new Date(docData.createdAt.seconds * 1000).toLocaleDateString(),
+          value: docData.totalDuration,
+        };
+      });
+      setSleepData(data);
+    } catch (error) {
+      console.error('Error fetching sleep data:', error);
+      Alert.alert('Error', 'Failed to fetch sleep data.');
+    }
+  };
+
+  const chartConfig = {
+    backgroundColor: "#000000",
+    backgroundGradientFrom: "#1E2923",
+    backgroundGradientTo: "#08130D",
+    color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
+    style: {
+      borderRadius: 16
     },
-    chartContainer: {
-        alignItems: 'center',
-        marginVertical: 20,
+    propsForDots: {
+      r: "6",
+      strokeWidth: "2",
+      stroke: "#ffa726"
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={showDatePicker}
+        onRequestClose={() => {
+          setShowDatePicker(!showDatePicker);
+        }}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <DateTimePicker
+              testID="dateTimePicker"
+              value={date}
+              mode={'date'}
+              is24Hour={true}
+              display="default"
+              onChange={onChange}
+            />
+            <Button title="Close" onPress={() => setShowDatePicker(!showDatePicker)} />
+          </View>
+        </View>
+      </Modal>
+      
+      <TouchableOpacity style={styles.button} onPress={() => setShowDatePicker(true)}>
+        <Text style={styles.buttonText}>Choose Date</Text>
+      </TouchableOpacity>
+      {sleepData.length > 0 && (
+        <ScrollView horizontal={true}>
+          <LineChart
+            data={{
+              labels: sleepData.map(entry => entry.label),
+              datasets: [{
+                data: sleepData.map(entry => entry.value)
+              }]
+            }}
+            width={Dimensions.get("window").width * 1.5}
+            height={220}
+            yAxisLabel=""
+            yAxisSuffix="s"
+            yAxisInterval={1}
+            chartConfig={chartConfig}
+            bezier
+            style={{
+              marginVertical: 8,
+              borderRadius: 16
+            }}
+          />
+        </ScrollView>
+      )}
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: '#f4f4f8',
+  },
+  button: {
+    backgroundColor: '#6200ee',
+    padding: 10,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#ffffff',
+    fontSize: 18,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2
     },
-    headerText: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginBottom: 10,
-    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
+  }
 });
