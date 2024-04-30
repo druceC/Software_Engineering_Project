@@ -32,7 +32,7 @@ const Welcome = ({ navigation }) => {
     <View style={styles.container}>
       <Image style={styles.image} source={require("../images/welcome.png")} />
       <View style={styles.subContainer}>
-        <Text style={styles.text}>Ready For your Written Test?</Text>
+        <Text style={styles.text}>Ready for your sleep test?</Text>
       </View>
       <TouchableOpacity
         onPress={() => {
