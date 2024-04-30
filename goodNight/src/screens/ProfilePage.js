@@ -15,14 +15,25 @@ const ProfilePage = () => {
     const [username, setUsername] = useState('Loading');
 
     const fetchUsername = async (uid) => {
-        const querySnapshot = await firestore().collection('usernames').where('uid', '==', uid).get();
-        const userDoc = querySnapshot.docs[0];
-        return userDoc.data().username; 
+        try {
+            const querySnapshot = await firestore().collection('usernames').where('uid', '==', uid).get();
+            if (querySnapshot.empty) {
+                return 'Set Username';  // Return 'Set Username' if no documents found
+            }
+            const userDoc = querySnapshot.docs[0];  // Safe to access the first document
+            const username = userDoc.data().username;
+            return username || 'Set Username';  // Return the username or 'Set Username' if it's falsy
+        } catch (error) {
+            console.error('Error fetching username:', error);
+            return 'Set Username';  // Return 'Set Username' in case of any error
+        }
     };
+    
     fetchUsername(user.uid)
         .then(username => {
             setUsername(username);
-        })
+        });
+    
 
     return (
         <ScrollView style={styles.container}>
@@ -54,6 +65,7 @@ const ProfilePage = () => {
                     <List.Item
                         title="Graphs & Reports"
                         left={() => <List.Icon icon="chart-bar" />}
+                        right={() => <List.Icon icon="chevron-right" />}
                         GoogleMap 
                         style={styles.listItem}
                         onPress={() => { }}
@@ -75,17 +87,10 @@ const ProfilePage = () => {
                         style={styles.listItem}
                     />
                     <List.Item
-                        title="Graphs & Reports"
-                        left={() => <List.Icon icon="chart-bar" />}
+                        title="Log Out"
+                        left={() => <List.Icon icon="logout-variant" />}
                         right={() => <List.Icon icon="chevron-right" />}
-                        onPress={() => { }}
-                        style={styles.listItem}
-                    />
-                    <List.Item
-                        title="Sleep Cycle Evaluation"
-                        left={() => <List.Icon icon="calendar" />}
-                        right={() => <List.Icon icon="chevron-right" />}
-                        onPress={() => { }}
+                        onPress={() => nav.navigate("LoginScreen")}
                         style={styles.listItem}
                     />
                     <List.Item
