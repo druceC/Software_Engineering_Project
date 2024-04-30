@@ -66,7 +66,7 @@ export const SleepTrackMenu = () => {
         const movement = Math.sqrt(x * x + y * y + z * z);
         const asleep = movement < 1.5;
 
-        console.log(asleep);
+        // console.log(asleep);
 
         setSleepData(prevState => {
           let updates = { ...prevState };
@@ -104,19 +104,19 @@ export const SleepTrackMenu = () => {
 
   const saveSleepData = async (data) => {
     const user = auth().currentUser;
-  
+
     if (user) {
-      console.log('User ID:', user.uid);
-      console.log('User Email:', user.email);
+      // console.log('User ID:', user.uid);
+      // console.log('User Email:', user.email);
     }
     const { sleepStart, sleepEnd, wakeTimes, remPeriods, lightSleepCycles, totalDuration } = data;
-  
+
     const remDuration = remPeriods.reduce((total, period) => total + period.duration, 0);
     const lightSleepDuration = lightSleepCycles.reduce((total, cycle) => total + cycle.duration, 0);
-  
+
     const remPercentage = (remDuration / totalDuration) * 100;
     const lightSleepPercentage = (lightSleepDuration / totalDuration) * 100;
-  
+
     if (sleepStart && sleepEnd) {
       try {
         await firestore().collection('sleepData').add({
@@ -186,7 +186,7 @@ export const SleepTrackMenu = () => {
     let remStartIndex = null, lightSleepStartIndex = null;
 
     movements.forEach((movement, index) => {
-      console.log(`Index: ${index}, Movement: ${movement}, isREM: ${isREM}, isLightSleep: ${isLightSleep}`);
+      // console.log(`Index: ${index}, Movement: ${movement}, isREM: ${isREM}, isLightSleep: ${isLightSleep}`);
       // Handle REM sleep detection
       if (movement <= remThreshold && !isREM) {
         isREM = true;
