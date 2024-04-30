@@ -64,7 +64,7 @@ export const SleepTrackMenu = () => {
       Accelerometer.setUpdateInterval(1000); // update every second
       accelerometerSubscription = Accelerometer.addListener(({ x, y, z }) => {
         const movement = Math.sqrt(x * x + y * y + z * z);
-        const asleep = movement < 1.5;
+        const asleep = movement < 1;
 
         // console.log(asleep);
 
@@ -111,12 +111,6 @@ export const SleepTrackMenu = () => {
     }
     const { sleepStart, sleepEnd, wakeTimes, remPeriods, lightSleepCycles, totalDuration } = data;
 
-    const remDuration = remPeriods.reduce((total, period) => total + period.duration, 0);
-    const lightSleepDuration = lightSleepCycles.reduce((total, cycle) => total + cycle.duration, 0);
-
-    const remPercentage = (remDuration / totalDuration) * 100;
-    const lightSleepPercentage = (lightSleepDuration / totalDuration) * 100;
-
     if (sleepStart && sleepEnd) {
       try {
         await firestore().collection('sleepData').add({
@@ -127,8 +121,6 @@ export const SleepTrackMenu = () => {
           totalDuration,
           remPeriods,
           lightSleepCycles,
-          remPercentage,
-          lightSleepPercentage,
           createdAt: firestore.FieldValue.serverTimestamp(),
         });
         Alert.alert('Success', 'Sleep data saved successfully');
@@ -175,8 +167,8 @@ export const SleepTrackMenu = () => {
   };
 
   function analyzeSleepCycles(movements, timestamps) {
-    const remThreshold = 1.9; // Threshold for REM sleep
-    const lightSleepThreshold = 2.0; // Higher threshold for light sleep
+    const remThreshold = 0.2; // Threshold for REM sleep
+    const lightSleepThreshold = 1.5; // Higher threshold for light sleep
     let sleepCycles = {
       remPeriods: [],
       lightSleepCycles: []
