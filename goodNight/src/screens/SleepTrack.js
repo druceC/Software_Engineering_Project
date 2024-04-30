@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Animated } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Animated, Dimensions, Vibration, ScrollView } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import { Accelerometer } from 'expo-sensors';
 import auth from '@react-native-firebase/auth';
@@ -7,6 +7,9 @@ import { Audio } from 'expo-av';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Slider from '@react-native-community/slider';
 import { Alert } from 'react-native';
+import { LineChart } from 'react-native-chart-kit';
+import { LinearGradient } from 'expo-linear-gradient';
+
 
 export const SleepTrackMenu = () => {
   const [isTracking, setIsTracking] = useState(false);
@@ -101,13 +104,19 @@ export const SleepTrackMenu = () => {
 
   const saveSleepData = async (data) => {
     const user = auth().currentUser;
-
+  
     if (user) {
-      console.log('User ID:', user.uid); // You can access the user's UID
-      console.log('User Email:', user.email); // You can access the user's email
+      console.log('User ID:', user.uid);
+      console.log('User Email:', user.email);
     }
     const { sleepStart, sleepEnd, wakeTimes, remPeriods, lightSleepCycles, totalDuration } = data;
-    // Only attempt to save data if both sleepStart and sleepEnd are not null
+  
+    const remDuration = remPeriods.reduce((total, period) => total + period.duration, 0);
+    const lightSleepDuration = lightSleepCycles.reduce((total, cycle) => total + cycle.duration, 0);
+  
+    const remPercentage = (remDuration / totalDuration) * 100;
+    const lightSleepPercentage = (lightSleepDuration / totalDuration) * 100;
+  
     if (sleepStart && sleepEnd) {
       try {
         await firestore().collection('sleepData').add({
@@ -115,16 +124,17 @@ export const SleepTrackMenu = () => {
           sleepStart,
           sleepEnd,
           wakeTimes,
-          totalDuration: (sleepEnd.getTime() - sleepStart.getTime()) / 1000, // Calculate duration in seconds
+          totalDuration,
           remPeriods,
           lightSleepCycles,
-          totalDuration,
+          remPercentage,
+          lightSleepPercentage,
           createdAt: firestore.FieldValue.serverTimestamp(),
         });
         Alert.alert('Success', 'Sleep data saved successfully');
         setSleepData(prevState => ({
           ...prevState,
-          wakeTimes: [] // Resetting wakeTimes to an empty array
+          wakeTimes: []
         }));
       } catch (error) {
         console.error('Error saving sleep data:', error);
@@ -265,6 +275,7 @@ export const SleepTrackMenu = () => {
     animationRef.current = animation; // Store the animation controller
   };
 
+
   const playMusic = async () => {
     try {
       const { sound } = await Audio.Sound.createAsync(require('../../assets/asmr.mp3'));
@@ -299,44 +310,99 @@ export const SleepTrackMenu = () => {
     }
   };
 
+  const handleButtonPress = () => {
+    Vibration.vibrate(50);
+    isTracking ? stopTracking() : startTracking();
+  };
+
+  const getGradientBackground = () => {
+    // Updated colors for the gradient
+    return isTracking
+      ? ['#120318', '#3b5998', '#4b134f'] // Active Tracking Gradient (Dark Blue and Pink)
+      : ['#4b134f', '#3b5998', '#120318']; // Inactive Tracking Gradient (Pink to Dark Blue)
+  };
+  const chartConfig = {
+    backgroundGradientFrom: '#1E2923',
+    backgroundGradientFromOpacity: 0,
+    backgroundGradientTo: '#08130D',
+    backgroundGradientToOpacity: 0.5,
+    color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
+    strokeWidth: 2,
+    barPercentage: 0.5,
+  };
+
+  const sleepStageData = {
+    labels: ['10pm', '11pm', '12am', '1am', '2am', '3am', '4am', '5am', '6am'],
+    datasets: [
+      {
+        data: [0, 1, 0, 2, 1, 2, 1, 2, 0],
+        color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+        strokeWidth: 2,
+      },
+    ],
+  };
+  const screenHeight = Dimensions.get('window').height;
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.time}>{formatTime(currentTime)}</Text>
-      <TouchableOpacity
-        style={[styles.button, isTracking && styles.activeButton]}
-        onPress={isTracking ? stopTracking : startTracking}
-      >
-        <Animated.View style={[styles.buttonInner, { transform: [{ scale: buttonScale }] }]}>
-          {isTracking ? (
-            <Text style={styles.durationText}>{formatDuration(duration)}</Text>
-          ) : (
-            <MaterialCommunityIcons name="power-sleep" size={80} color="#FFFFFF" />
-          )}
-        </Animated.View>
-      </TouchableOpacity>
-      <View style={styles.musicContainer}>
-        <TouchableOpacity style={styles.musicButton} onPress={isMusicPlaying ? stopMusic : playMusic}>
-          <MaterialCommunityIcons
-            name={isMusicPlaying ? 'pause' : 'play'}
-            size={24}
-            color="#FFFFFF"
-          />
-          <Text style={styles.musicButtonText}>{isMusicPlaying ? 'Pause' : 'Raining'}</Text>
+    <ScrollView style={{ flex: 1 }}>
+      <View style={styles.container}>
+        <LinearGradient
+          colors={getGradientBackground()}
+          style={styles.background}
+        />
+        <Text style={styles.time}>{formatTime(currentTime)}</Text>
+
+        <TouchableOpacity
+          style={[styles.button, isTracking && styles.activeButton]}
+          onPress={handleButtonPress}
+          activeOpacity={0.8}
+        >
+          <Animated.View style={[styles.buttonInner, { transform: [{ scale: buttonScale }] }]}>
+            {isTracking ? (
+              <Text style={styles.durationText}>{formatDuration(duration)}</Text>
+            ) : (
+              <MaterialCommunityIcons name="power-sleep" size={100} color="#FFFFFF" />
+            )}
+          </Animated.View>
         </TouchableOpacity>
-        {isMusicPlaying && (
-          <Slider
-            style={styles.musicSlider}
-            minimumValue={0}
-            maximumValue={musicDuration}
-            value={musicProgress}
-            onValueChange={handleMusicSliderChange}
-            minimumTrackTintColor="#FFFFFF"
-            maximumTrackTintColor="#4A5568"
-            thumbTintColor="#FFFFFF"
+        <View style={styles.musicContainer}>
+          <TouchableOpacity
+            style={styles.musicButton}
+            onPress={isMusicPlaying ? stopMusic : playMusic}
+            activeOpacity={0.8}
+          >
+            <MaterialCommunityIcons
+              name={isMusicPlaying ? 'pause' : 'play'}
+              size={32}
+              color="#FFFFFF"
+            />
+            <Text style={styles.musicButtonText}>{isMusicPlaying ? 'Pause' : 'Raining'}</Text>
+          </TouchableOpacity>
+          {isMusicPlaying && (
+            <Slider
+              style={styles.musicSlider}
+              minimumValue={0}
+              maximumValue={musicDuration}
+              value={musicProgress}
+              onValueChange={handleMusicSliderChange}
+              minimumTrackTintColor="#FFFFFF"
+              maximumTrackTintColor="#4A5568"
+              thumbTintColor="#FFFFFF"
+            />
+          )}
+        </View>
+        <View style={styles.chartContainer}>
+          <LineChart
+            data={sleepStageData}
+            width={350}
+            height={220}
+            chartConfig={chartConfig}
+            bezier
+            style={styles.chart}
           />
-        )}
+        </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -344,67 +410,115 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#1A202C',
+    paddingTop: 50, // Added padding at the top
+  },
+  background: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
   },
   time: {
-    fontSize: 48,
+    fontFamily: 'monospace',
+    fontSize: 56,
     fontWeight: 'bold',
     color: '#FFFFFF',
-    marginBottom: 40,
+    marginTop: 20, // Increased space above the current time
+    marginBottom: 40, // Slightly reduced bottom margin
   },
   button: {
-    width: 200,
-    height: 200,
-    borderRadius: 100,
+    width: 230,
+    height: 230,
+    borderRadius: 110,
     backgroundColor: '#2D3748',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 40,
-    elevation: 5,
+    marginBottom: 40, // Reduced bottom margin
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 4.65,
   },
   activeButton: {
     backgroundColor: '#3182CE',
   },
   buttonInner: {
-    width: 180,
-    height: 180,
-    borderRadius: 90,
-    backgroundColor: '#4A5568',
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    backgroundColor: '#5A607D',
     justifyContent: 'center',
     alignItems: 'center',
   },
   durationText: {
-    fontSize: 36,
-    fontWeight: 'bold',
+    //fontFamily: 'monospace',
+    fontSize: 42,
+    fontWeight: '600',
     color: '#FFFFFF',
   },
   musicContainer: {
-    width: '80%',
+    width: '80%', // Reduced the width for the music container
     alignItems: 'center',
     backgroundColor: '#2D3748',
     borderRadius: 10,
-    paddingHorizontal: 20,
-    paddingVertical: 20,
-    elevation: 3,
+    paddingHorizontal: 10,
+    paddingVertical: 10, // Reduced padding for a slimmer bar
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    marginBottom: 25, // Slightly increased the bottom margin
   },
   musicButton: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#4A5568',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 5,
-    marginBottom: 20,
+    paddingHorizontal: 10, // Slightly reduced horizontal padding
+    paddingVertical: 10, // Reduced vertical padding
+    borderRadius: 10,
+    marginBottom: 10, // Increased margin for spacing
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
   },
   musicButtonText: {
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: 'monospace',
+    fontSize: 15,
+    fontWeight: '600',
     color: '#FFFFFF',
     marginLeft: 10,
   },
   musicSlider: {
-    width: '100%',
-    height: 40,
+    width: '90%', // Reduced width for a smaller slider
+    height: 30, // Reduced height for a slimmer slider
+  },
+  chartContainer: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  chart: {
+    borderRadius: 10,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
 });
