@@ -12,7 +12,7 @@ const ProfilePage = () => {
     const { colors } = useTheme();
     const nav = useNavigation();
     const user = auth().currentUser;
-    const [username, setUsername] = useState('Loading');
+    const [username, setUsername] = useState('Loading...');
 
     const fetchUsername = async (uid) => {
         try {
@@ -68,7 +68,7 @@ const ProfilePage = () => {
                         right={() => <List.Icon icon="chevron-right" />}
                         GoogleMap 
                         style={styles.listItem}
-                        onPress={() => { }}
+                        onPress={() => nav.navigate("GraphReportScreen")}
                         borderTopLeftRadius={15}
                         borderTopRightRadius={15}
                     />

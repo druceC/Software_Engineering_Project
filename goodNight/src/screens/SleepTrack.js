@@ -392,14 +392,14 @@ export const SleepTrackMenu = () => {
           )}
         </View>
         <View style={styles.chartContainer}>
-          <LineChart
+          {/* <LineChart
             data={sleepStageData}
             width={350}
             height={220}
             chartConfig={chartConfig}
             bezier
             style={styles.chart}
-          />
+          /> */}
         </View>
       </View>
     </ScrollView>
@@ -462,6 +462,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   musicContainer: {
+    marginTop:"30%",
     width: '80%', // Reduced the width for the music container
     alignItems: 'center',
     backgroundColor: '#2D3748',

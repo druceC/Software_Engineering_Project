@@ -13,6 +13,7 @@ import { BlankPage } from './src/screens/BlankPage';
 import { Text, BottomNavigation } from 'react-native-paper';
 import { ProfilePage } from './src/screens/ProfilePage';
 import { TestScreen } from './src/screens/TestingScreen';
+import{ GraphReportScreen } from './src/screens/GraphReportScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -47,6 +48,7 @@ export default function App() {
         <Stack.Screen name="blankPage" component={BlankPage} />
         <Stack.Screen name="ProfilePage" component={ProfilePage} />
         <Stack.Screen name="TestScreen" component={TestScreen} />
+        <Stack.Screen name="GraphReportScreen" component={GraphReportScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
