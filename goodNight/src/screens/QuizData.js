@@ -67,7 +67,7 @@ export default data = [
     },
     // Question 7
     {
-        question: "To what extent do you consider your sleep problem to interfere with your daily functioning (eg. daytime fatigue, mood, ability to function at work/daily chores, concentration, memory, mood, etc.) currently?",
+        question: "To what extent do you consider your current sleep problem to interfere with your mood and ability to work?",
         options: [
           "Not at all interfering",
           "A little",
