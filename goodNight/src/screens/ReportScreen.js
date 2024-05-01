@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, Button, StyleSheet, Alert, ScrollView, SafeAreaView } from 'react-native';
+import { View, StyleSheet, Alert, ScrollView, SafeAreaView } from 'react-native';
+import { Avatar, Title, Paragraph, Button, Text, List, useTheme, Card, TouchableRipple } from 'react-native-paper';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -64,58 +65,84 @@ export const ReportScreen = () => {
     const secs = seconds % 60;
     return `${hrs}h ${mins}m ${secs}s`;
   };
-  
+
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollContainer}>
         {sleepData && sleepData.map((entry, index) => (
           <View key={index} style={styles.dataContainer}>
-            <Text style={styles.dataHeader}>Sleep Data for {new Date(entry.sleepStart.seconds * 1000).toLocaleDateString()}:</Text>
-            <Text>Sleep Start: {new Date(entry.sleepStart.seconds * 1000).toLocaleTimeString()}</Text>
-            <Text>Sleep End: {new Date(entry.sleepEnd.seconds * 1000).toLocaleTimeString()}</Text>
-            <Text>Total Duration: {formatDuration(entry.totalDuration)}</Text>
-            
-            {entry.lightSleepCycles.length > 0 && (
-              <>
-                <Text>Light Sleep Cycles:</Text>
-                {entry.lightSleepCycles.map((cycle, idx) => (
-                  <Text key={idx}>
-                    Start: {new Date(cycle.start.seconds * 1000).toLocaleTimeString()}, 
-                    End: {new Date(cycle.end.seconds * 1000).toLocaleTimeString()}
-                  </Text>
-                ))}
-              </>
-            )}
-            
-            {entry.remPeriods.length > 0 && (
-              <>
-                <Text>REM Periods:</Text>
-                {entry.remPeriods.map((period, idx) => (
-                  <Text key={idx}>
-                    Start: {new Date(period.start.seconds * 1000).toLocaleTimeString()}, 
-                    End: {new Date(period.end.seconds * 1000).toLocaleTimeString()}
-                  </Text>
-                ))}
-              </>
-            )}
-            
-            {entry.wakeTimes.length > 0 && (
-              <>
-                <Text>Wake Times:</Text>
-                {entry.wakeTimes.map((wakeTime, idx) => (
-                  <Text key={idx}>
-                    Time: {new Date(wakeTime.seconds * 1000).toLocaleTimeString()}
-                  </Text>
-                ))}
-              </>
-            )}
-  
+            <View>
+              <Card
+                style={styles.profileCard}
+                onPress={() => { }}>
+                {/* action of pressing the profile card */}
+                <Card.Title
+                  title={<Text style={styles.dataHeader}>{new Date(entry.sleepStart.seconds * 1000).toLocaleDateString()}</Text>}
+                  subtitle={"user.email"}
+                  titleStyle={styles.cardTitle}
+                  subtitleStyle={styles.cardSubtitle}
+                  left={(props) => <Avatar.Image {...props} size={60} source={require('../images/logo.png')} />}
+                  leftStyle={styles.avatar}
+                  style={styles.cardContent}
+                />
+                <Card.Content>
+                 
+                  <Text>Sleep Start: {new Date(entry.sleepStart.seconds * 1000).toLocaleTimeString()}</Text>
+                  <Text>Sleep End: {new Date(entry.sleepEnd.seconds * 1000).toLocaleTimeString()}</Text>
+                  <Text>Total Duration: {formatDuration(entry.totalDuration)}</Text>
+
+                  {entry.lightSleepCycles.length > 0 && (
+                    <>
+                      <Text>Light Sleep Cycles:</Text>
+                      {entry.lightSleepCycles.map((cycle, idx) => (
+                        <Text key={idx}>
+                          Start: {new Date(cycle.start.seconds * 1000).toLocaleTimeString()},
+                          End: {new Date(cycle.end.seconds * 1000).toLocaleTimeString()}
+                        </Text>
+                      ))}
+                    </>
+                  )}
+
+                  {entry.remPeriods.length > 0 && (
+                    <>
+                      <Text>REM Periods:</Text>
+                      {entry.remPeriods.map((period, idx) => (
+                        <Text key={idx}>
+                          Start: {new Date(period.start.seconds * 1000).toLocaleTimeString()},
+                          End: {new Date(period.end.seconds * 1000).toLocaleTimeString()}
+                        </Text>
+                      ))}
+                    </>
+                  )}
+
+                  {entry.wakeTimes.length > 0 && (
+                    <>
+                      <Text>Wake Times:</Text>
+                      {entry.wakeTimes.map((wakeTime, idx) => (
+                        <Text key={idx}>
+                          Time: {new Date(wakeTime.seconds * 1000).toLocaleTimeString()}
+                        </Text>
+                      ))}
+                    </>
+                  )}
+                  {/* The title and paragraph have been removed as the Card.Title already contains the name and email */}
+                </Card.Content>
+                <Card.Actions>
+                  {/* Actions can be added here if needed */}
+                </Card.Actions>
+              </Card>
+            </View>
+
+
           </View>
         ))}
       </ScrollView>
       <View style={styles.footer}>
-        <Button onPress={showDatepicker} title="Choose Date" color="#6200ee" />
+        {/* <Button onPress={showDatepicker} title="Choose Date" /> */}
+        <Button icon="calendar" mode="contained" onPress={(showDatepicker)}>
+          Choose Date
+        </Button>
         {showDatePicker && (
           <DateTimePicker
             value={date}
@@ -126,7 +153,7 @@ export const ReportScreen = () => {
         )}
       </View>
     </SafeAreaView>
-  );  
+  );
 };
 
 const styles = StyleSheet.create({
@@ -141,14 +168,14 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginTop: 20,
     padding: 20,
-    backgroundColor: '#fff',
+    // backgroundColor: '#fff',
     borderRadius: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-    alignItems: 'center', // Centers all child components horizontally
+    // shadowColor: '#000',
+    // shadowOffset: { width: 0, height: 2 },
+    // shadowOpacity: 0.25,
+    // shadowRadius: 3.84,
+    // elevation: 5,
+    // alignItems: 'center', // Centers all child components horizontally
   },
   dataHeader: {
     fontSize: 18, // Increased font size

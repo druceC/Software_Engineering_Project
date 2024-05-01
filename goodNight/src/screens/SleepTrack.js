@@ -336,7 +336,7 @@ export const SleepTrackMenu = () => {
   const screenHeight = Dimensions.get('window').height;
 
   return (
-    <ScrollView style={{ flex: 1 }}>
+    <View style={{ flex: 1 }}>
       <View style={styles.container}>
         <LinearGradient
           colors={getGradientBackground()}
@@ -394,7 +394,7 @@ export const SleepTrackMenu = () => {
           /> */}
         </View>
       </View>
-    </ScrollView>
+    </View>
   );
 };
 
@@ -454,7 +454,8 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   musicContainer: {
-    marginTop:"30%",
+    // marginTop:"30%",
+    // bottom: "0%",
     width: '80%', // Reduced the width for the music container
     alignItems: 'center',
     backgroundColor: '#2D3748',
