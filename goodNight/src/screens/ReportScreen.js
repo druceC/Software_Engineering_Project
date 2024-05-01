@@ -81,14 +81,15 @@ export const ReportScreen = () => {
     return sleepData.map(entry => {
       const lightSleepDuration = entry.lightSleepCycles.reduce((acc, cycle) => acc + (cycle.end.seconds - cycle.start.seconds), 0);
       const remDuration = entry.remPeriods.reduce((acc, period) => acc + (period.end.seconds - period.start.seconds), 0);
-      console.log(lightSleepDuration);
+      // console.log(lightSleepDuration);
       const lightSleepPercentage = (lightSleepDuration / entry.totalDuration) * 100;
       const remPercentage = (remDuration / entry.totalDuration) * 100;
       const remainPercentage = 100 - lightSleepPercentage - remPercentage;
-      console.log(lightSleepPercentage);
+      // console.log(lightSleepPercentage);
 
       setRemPercentage(remPercentage);
       setLightSleepPercentage(lightSleepPercentage);
+      setRemainPercentage(remainPercentage);
       // return {
       //   ...entry,
       //   lightSleepPercentage,
@@ -211,16 +212,16 @@ export const ReportScreen = () => {
                         Sleep Report
                       </Text>
                       <Text style={{ color: '#663399', fontSize: 16, fontWeight: 'bold', marginLeft: 16 }} >Sleep Start:</Text>
-                      <Text style={{ color: '#2d0050', fontSize: 36, fontWeight: 'bold', marginLeft: 140 }} >{new Date(entry.sleepStart.seconds * 1000).toLocaleTimeString()}</Text>
+                      <Text style={styles.timedata} >{new Date(entry.sleepStart.seconds * 1000).toLocaleTimeString()}</Text>
                       <Text style={{ color: '#663399', fontSize: 16, fontWeight: 'bold', marginLeft: 16 }}>Sleep End:</Text>
-                      <Text style={{ color: '#2d0050', fontSize: 36, fontWeight: 'bold', marginLeft: 145 }} >{new Date(entry.sleepEnd.seconds * 1000).toLocaleTimeString()}</Text>
+                      <Text style={styles.timedata} >{new Date(entry.sleepEnd.seconds * 1000).toLocaleTimeString()}</Text>
                       <Text style={{ color: '#663399', fontSize: 16, fontWeight: 'bold', marginLeft: 16 }}>Total Duration: </Text>
-                      <Text style={{ color: '#2d0050', fontSize: 36, fontWeight: 'bold', marginLeft: 155 }}> {formatDuration(entry.totalDuration)} </Text>
+                      <Text style={styles.timedata}> {formatDuration(entry.totalDuration)} </Text>
                       {entry.wakeTimes.length > 0 && (
                         <>
                           <Text style={{ color: '#663399', fontSize: 16, fontWeight: 'bold', marginLeft: 16 }}>Wake Times:</Text>
                           {entry.wakeTimes.map((wakeTime, idx) => (
-                            <Text key={idx} style={{ color: '#2d0050', fontSize: 36, fontWeight: 'bold', marginLeft: 125 }}>
+                            <Text key={idx} style={styles.timedata}>
                               {new Date(wakeTime.seconds * 1000).toLocaleTimeString()}
                             </Text>
                           ))}
@@ -342,4 +343,10 @@ const styles = StyleSheet.create({
     alignItems: 'left',
     marginLeft: -70,
   },
+  timedata: {
+   color: '#2d0050', 
+   fontSize: 36, 
+   fontWeight: 'bold', 
+   marginLeft: "20%"
+  }
 });
