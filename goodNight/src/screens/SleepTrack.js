@@ -29,6 +29,7 @@ export const SleepTrackMenu = () => {
   const [musicDuration, setMusicDuration] = useState(0);
   const soundRef = useRef(null);
   const animationRef = useRef(null); // Reference to store the animation
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -269,6 +270,12 @@ export const SleepTrackMenu = () => {
 
 
   const playMusic = async () => {
+    setIsLoading(true);
+    // Simulate a delay for playing music, e.g., fetching data or preparing music
+    setTimeout(() => {
+      setIsMusicPlaying(true);
+      setIsLoading(false);
+    }, 2000); // delay of 2 seconds
     try {
       const { sound } = await Audio.Sound.createAsync(require('../../assets/asmr.mp3'));
       soundRef.current = sound;
