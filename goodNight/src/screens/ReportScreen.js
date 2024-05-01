@@ -310,10 +310,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f4f4f8',
+    
   },
   scrollContainer: {
     flex: 1,
     height: '100%',
+    
   },
   card: {
     marginHorizontal: 20,
@@ -327,6 +329,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.35,
     shadowRadius: 3.84,
+    alignItems: 'flex-end', // Horizontally align the content to the end
     // elevation: 5,
     // alignItems: 'center', // Centers all child components horizontally
   },
@@ -345,8 +348,8 @@ const styles = StyleSheet.create({
   },
   timedata: {
    color: '#2d0050', 
-   fontSize: 36, 
+   fontSize: 30, 
    fontWeight: 'bold', 
-   marginLeft: "20%"
+   marginLeft: "35%"
   }
 });
