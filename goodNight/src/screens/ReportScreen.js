@@ -329,7 +329,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.35,
     shadowRadius: 3.84,
-    alignItems: 'flex-end', // Horizontally align the content to the end
+    // alignItems: 'flex-end', // Horizontally align the content to the end
     // elevation: 5,
     // alignItems: 'center', // Centers all child components horizontally
   },
