@@ -6,7 +6,6 @@ import firestore from '@react-native-firebase/firestore';
 const Result = ({ navigation, route }) => {
     const { score } = route.params;
     const uid = auth().currentUser.uid;
-    // const uid = await firestore().collection('usernames').get();
 
     const saveSleepScoreToFirestore = async (score, uid) => {
         try {
