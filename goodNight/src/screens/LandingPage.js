@@ -103,8 +103,8 @@ export const LandingPage = () => {
 
       <Tab.Screen
         // Testing Screen Tab Content
-        name="TherapySession"
-        component={TherapySessionMenu}
+        name="CBTIQuestionnaire"
+        component={CBTIQuestionnairePage_v1}
         options={{
           tabBarLabel: 'Evaluation',// Tab Name
           tabBarIcon: ({ color, size }) => {
