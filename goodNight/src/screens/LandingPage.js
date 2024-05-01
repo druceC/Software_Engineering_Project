@@ -12,7 +12,8 @@ import { Login } from './Login'
 import { SleepTrackMenu } from './SleepTrack';
 import { LocateTherapistMenu } from './LocateNearbyTherapist';
 import { ProfilePage } from './ProfilePage';
-import { TherapySessionMenu } from './TherapySessionMenu';
+// import { TherapySessionMenu } from './TherapySessionMenu';
+import CBTIQuestionnairePage_v1 from './Questionnaire';
 import { ReportScreen } from './ReportScreen';
 
 
