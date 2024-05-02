@@ -49,13 +49,13 @@ const Welcome = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#38588b",
+    backgroundColor: "#282c34",
     alignItem: "center",
     justifyContent: "center",
   },
   image: {
     width: "100%",
-    height: 350,
+    height: 150,
     resizeMode: "contain",
   },
   subContainer: {
@@ -81,8 +81,9 @@ const styles = StyleSheet.create({
   },
   btnText: {
     fontSize: 20,
+    fontWeight: "bold",
     textAlign: "center",
-    color: "#ffffff",
+    color: "#282c34",
     letterSpacing: 1.1,
   },
 });
