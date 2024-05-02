@@ -7,6 +7,17 @@ const Result = ({ navigation, route }) => {
     const { score } = route.params;
     const uid = auth().currentUser.uid;
 
+    const sleepMessage = (score) => {
+        if (score >= 21) {
+          return "Excellent Sleep Health";
+        } else if (score >= 14) {
+          return "Suboptimal Sleep Health";
+        } else if (score >= 13) {
+          return "Clinical Insomnia";
+        } else {
+          return "Severe Clinical Insomnia";
+        }
+    };
     const saveSleepScoreToFirestore = async (score, uid) => {
         try {
             await firestore().collection('sleepScore').add({
@@ -26,7 +37,8 @@ const Result = ({ navigation, route }) => {
     return (
         <View style={styles.container}>
         <View style={styles.subContainer}>
-            <Text style={{ fontSize: 50 }}>Your Sleep Score</Text>
+            <Text style={styles.sleepMessage}>{sleepMessage(score)}</Text>
+            <Text style={styles.textScore}>Your Sleep Score</Text>
 
             <View style={styles.textWrapper}>
             <Text style={styles.score}>{score}</Text>
@@ -49,12 +61,18 @@ const Result = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#38588b",
+    backgroundColor: "#414958",
     alignItems: "center",
     justifyContent: "center",
   },
+  image: {
+    width: "100%",
+    height: 150,
+    resizeMode: "contain",
+  },
   subContainer: {
-    backgroundColor: "#38588b",
+    backgroundColor: "#282c34",
+    height: "65%",
     width: "90%",
     borderRadius: 20,
     padding: 20,
@@ -66,8 +84,21 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 30,
   },
+    sleepMessage: {
+        padding: 20,
+        paddingVertical: 40,
+        fontSize: 40,
+        textAlign: "center",
+        color: "#FFDE82",
+        fontWeight: "bold",
+    },
+    textScore: {
+        fontSize: 20,
+        color: "#ffffff",
+        fontWeight: "bold",
+    },
   score: {
-    fontSize: 100,
+    fontSize: 40,
     color: "#ffffff",
     fontWeight: "bold",
   },
