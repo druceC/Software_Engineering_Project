@@ -45,34 +45,10 @@ const QuizPage = ({ navigation }) => {
                 setCurrentOptionSelected(selectedOption);
                 setScore(score - 0);
             }
-            // setCurrentOptionSelected(selectedOption);
-            // setCorrectOption(correct_option);
-            // setIsOptionsDisabled(true);
-            // if (selectedOption == correct_option) {
-            //     setScore(score + 1);
-            // }
             setIsOptionsDisabled(true);
         }
     };
-    // const validateAnswer = (selectedOption, navigation) => {
-    //     // if (isOptionsDisabled == false) {
-    //     // setCurrentOptionSelected(selectedOption);
-    //     // let correct_option = allQuestions[currentQuestionIndex]["correct_option"];
 
-    //     // setCurrentOptionSelected(selectedOption);
-    //     // setCorrectOption(correct_option);
-    //     // setIsOptionsDisabled(true);
-    //     // if (selectedOption == correct_option) {
-    //     //     setScore(score + 1);
-    //     // }
-    //     // }
-    //     if(currentQuestionIndex!=7){
-    //         setScore(score+selectedOption);
-    //     }
-    //     else{
-    //         // Set last question as sleep goal
-    //     }
-    // };
     const handleNext = (navigation) => {
         if (currentQuestionIndex == allQuestions.length - 1) {
         navigation.navigate("Result", { score: score, restartQuiz: restartQuiz });
@@ -115,7 +91,7 @@ const QuizPage = ({ navigation }) => {
                 {
                   translateY: fadeAnim.interpolate({
                     inputRange: [0, 1],
-                    outputRange: [(150 / 4) * (index + 10), 0], // 0 : 150, 0.5 : 75, 1 : 0
+                    outputRange: [(150 / 4) * (index + 10), 0], 
                   }),
                 },
               ],
@@ -136,20 +112,6 @@ const QuizPage = ({ navigation }) => {
                     : "#fac782",
                 },
                 ]}
-            //   onPress={() => validateAnswer(option, navigation)}
-            //   key={index}
-            //   style={[
-            //     { ...styles.optionsText },
-            //     {
-            //       backgroundColor: isOptionsDisabled
-            //         ? option == correctOption
-            //           ? "#7be25b"
-            //           : option == currentOptionSelected
-            //           ? "#0F2E57" //red
-            //           : "#cfcdcc" //gray
-            //         : "#fac782",
-            //     },
-            //   ]}
             >
               <Text
                 style={{
@@ -196,105 +158,55 @@ const QuizPage = ({ navigation }) => {
   );
 };
 
-// const styles = StyleSheet.create({
-//     scrollView: { backgroundColor: "#38588b" },
-//     container: {
-//       flex: 1,
-//       paddingVertical: 10,
-//       paddingHorizontal: 20,
-//       position: "relative",
-//     },
-//     subContainer: {
-//       marginTop: "13%", // Adjusted marginTop to position subContainer above 2/3 of the page
-//       marginVertical: 0,
-//       padding: 40,
-//       borderTopRightRadius: 40,
-//       borderRadius: 10,
-//       backgroundColor: "white",
-//       alignItems: "center",
-//       shadowColor: "#171717",
-//       shadowOffset: { width: -6, height: 6 },
-//       shadowOpacity: 0.2,
-//       shadowRadius: 3,
-//     //   bottom: "63%",
-//     },
-//     optionsText: {
-//       borderRadius: 5,
-//       alignItems: "center",
-//       justifyContent: "center",
-//       padding: 10,
-//       paddingHorizontal: 30,
-//       marginVertical: 5,
-//       shadowColor: "#171717",
-//       shadowOffset: { width: -3, height: 3 },
-//       shadowOpacity: 0.2,
-//       shadowRadius: 3,
-//       bottom: "83%",
-//     },
-//     btnNext: {
-//       borderRadius: 10,
-//       paddingVertical: 10,
-//       paddingHorizontal: 20,
-//       backgroundColor: "#ffffff",
-//       position: "absolute",
-//       bottom: "20%",
-//       right: 20,
-//     },
-//     btnNextText: {
-//       color: "#333",
-//       fontSize: 17,
-//       letterSpacing: 1.1,
-//     },
-//   });
-
 const styles = StyleSheet.create({
-  scrollView: { backgroundColor: "#38588b" },
-  container: {
-    flex: 1,
-    paddingVertical: 5,
-    paddingHorizontal: 20,
-    position: "relative",
-  },
-  subContainer: {
-    marginTop: 20,
-    marginVertical: 0,
-    padding: 40,
-    borderTopRightRadius: 40,
-    borderRadius: 10,
-    backgroundColor: "white",
-    alignItems: "center",
-    shadowColor: "#171717",
-    shadowOffset: { width: -6, height: 6 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
-    bottom: -20
-  },
-  optionsText: {
-    borderRadius: 5,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 10,
-    paddingHorizontal: 30,
-    marginVertical: 5,
-    shadowColor: "#171717",
-    shadowOffset: { width: -3, height: 3 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
-    bottom: 40
-  },
-  btnNext: {
-    borderRadius: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    backgroundColor: "#ffffff",
-    zIndex: 10,
-    // bottom: "500%"
-  },
-  btnNextText: {
-    color: "#333",
-    fontSize: 17,
-    letterSpacing: 1.1,
-    zIndex: 11
-  },
+    // scrollView: { backgroundColor: "#535A67" },
+    scrollView: {backgroundColor:"#282c34"},
+    container: {
+        flex: 1,
+        paddingVertical: 5,
+        paddingHorizontal: 20,
+        position: "relative",
+    },
+    subContainer: {
+        marginTop: 20,
+        marginVertical: 0,
+        padding: 40,
+        borderTopRightRadius: 40,
+        borderRadius: 10,
+        backgroundColor: "white",
+        alignItems: "center",
+        shadowColor: "#171717",
+        shadowOffset: { width: -6, height: 6 },
+        shadowOpacity: 0.2,
+        shadowRadius: 3,
+        bottom: -20
+    },
+    optionsText: {
+        borderRadius: 5,
+        alignItems: "center",
+        justifyContent: "center",
+        padding: 10,
+        paddingHorizontal: 30,
+        marginVertical: 5,
+        shadowColor: "#171717",
+        shadowOffset: { width: -3, height: 3 },
+        shadowOpacity: 0.2,
+        shadowRadius: 3,
+        bottom: 40
+    },
+    btnNext: {
+        borderRadius: 10,
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        backgroundColor: "#ffffff",
+        zIndex: 10,
+        // bottom: "500%"
+    },
+    btnNextText: {
+        color: "#333",
+        fontSize: 17,
+        letterSpacing: 1.1,
+        zIndex: 11
+    },
 });
 export default QuizPage;
