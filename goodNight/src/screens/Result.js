@@ -4,9 +4,12 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 
 const Result = ({ navigation, route }) => {
+    // Extract sleep score
     const { score } = route.params;
+    // Get current user's userID to be used for saving his score to the database
     const uid = auth().currentUser.uid;
 
+    // Function to evaluate user's sleep quality based on his sleep score from the ISI (Insomnia Severity Index)
     const sleepMessage = (score) => {
         if (score >= 21) {
           return "Excellent Sleep Health";
@@ -18,6 +21,7 @@ const Result = ({ navigation, route }) => {
           return "Severe Clinical Insomnia";
         }
     };
+    // Save user's sleep score and username to Firestore
     const saveSleepScoreToFirestore = async (score, uid) => {
         try {
             await firestore().collection('sleepScore').add({
@@ -30,6 +34,7 @@ const Result = ({ navigation, route }) => {
           console.error("Error saving sleep score: ", error);
         }
     };
+    // useEffect hook to save sleep score to Firestore on component mount
     useEffect(() => {
         saveSleepScoreToFirestore(score, uid);
     }, []);
@@ -48,8 +53,8 @@ const Result = ({ navigation, route }) => {
             <TouchableOpacity
             onPress={() => {
                 navigation.navigate("Welcome");
-          }}
-          style={styles.btnReset}
+            }}
+          style={styles.btnRedo}
         >
           <Text style={styles.btnText}>Proceed</Text>
         </TouchableOpacity>
@@ -65,11 +70,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  image: {
-    width: "100%",
-    height: 150,
-    resizeMode: "contain",
-  },
   subContainer: {
     backgroundColor: "#282c34",
     height: "65%",
@@ -78,31 +78,36 @@ const styles = StyleSheet.create({
     padding: 20,
     alignItems: "center",
   },
+  image: {
+    width: "100%",
+    height: 150,
+    resizeMode: "contain",
+  },
   textWrapper: {
     flexDirection: "row",
     justifyContent: "flex-start",
     alignItems: "center",
     marginVertical: 30,
   },
-    sleepMessage: {
-        padding: 20,
-        paddingVertical: 40,
-        fontSize: 40,
-        textAlign: "center",
-        color: "#FFDE82",
-        fontWeight: "bold",
-    },
-    textScore: {
-        fontSize: 20,
-        color: "#ffffff",
-        fontWeight: "bold",
-    },
+  sleepMessage: {
+      padding: 20,
+      paddingVertical: 40,
+      fontSize: 40,
+      textAlign: "center",
+      color: "#FFDE82",
+      fontWeight: "bold",
+  },
+  textScore: {
+      fontSize: 20,
+      color: "#ffffff",
+      fontWeight: "bold",
+  },
   score: {
     fontSize: 40,
     color: "#ffffff",
     fontWeight: "bold",
   },
-  btnReset: {
+  btnRedo: {
     backgroundColor: "#333",
     paddingHorizontal: 5,
     paddingVertical: 15,
