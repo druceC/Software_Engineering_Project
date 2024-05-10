@@ -9,11 +9,11 @@ import firestore from '@react-native-firebase/firestore';
 import { Audio } from 'expo-av';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Slider from '@react-native-community/slider';
-// import firebase from 'firebase';
 
 const Stack = createNativeStackNavigator();
 export default function CBTIQ() {
   return (
+    // Container to manage navigation between screens
     <NavigationContainer independent={true}>
       <Stack.Navigator initialRouteName="Welcome">
         <Stack.Screen
@@ -21,6 +21,7 @@ export default function CBTIQ() {
           component={Welcome}
           options={{ headerShown: false }}
         />
+        {/* Screen for the sleep evaluation form */}
         <Stack.Screen
           name="Quiz"
           component={sleepEvaluationPage}
@@ -35,6 +36,7 @@ export default function CBTIQ() {
             },
           }}
         />
+        {/* Screen for displaying the result */}
         <Stack.Screen
           name="Result"
           component={Result}
