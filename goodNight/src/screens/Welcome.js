@@ -1,12 +1,5 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  StyleSheet,
-  Animated,
-} from "react-native";
+import {View, Text, Image, TouchableOpacity, StyleSheet, Animated,} from "react-native";
 
 const Welcome = ({ navigation }) => {
   const [fadeAnim, setFadeAnim] = useState(new Animated.Value(1));
