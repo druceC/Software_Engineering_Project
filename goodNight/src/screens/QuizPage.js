@@ -1,15 +1,8 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  Animated,
-  StyleSheet,
-  TouchableOpacity,
-} from "react-native";
+import {View, Text, ScrollView, Animated, StyleSheet, TouchableOpacity,} from "react-native";
 import data from "./QuizData";
-import ProgressBar from "./ProgressBar";
 import Questions from "./Questions";
+import ProgressBar from "./ProgressBar";
 
 const QuizPage = ({ navigation }) => {
     const allQuestions = data;
@@ -23,7 +16,7 @@ const QuizPage = ({ navigation }) => {
     const [correctOption, setCorrectOption] = useState(null);
     const [score, setScore] = useState(28);
 
-    const restartQuiz = () => {
+    const proceed = () => {
         setCurrentQuestionIndex(0);
         setScore(0);
         setCurrentOptionSelected(null);
@@ -51,7 +44,7 @@ const QuizPage = ({ navigation }) => {
 
     const handleNext = (navigation) => {
         if (currentQuestionIndex == allQuestions.length - 1) {
-        navigation.navigate("Result", { score: score, restartQuiz: restartQuiz });
+        navigation.navigate("Result", { score: score, proceed: proceed });
         } else {
         setCurrentQuestionIndex(currentQuestionIndex + 1);
         setCurrentOptionSelected(null);
@@ -103,13 +96,11 @@ const QuizPage = ({ navigation }) => {
                 style={[
                 { ...styles.optionsText },
                 {
-                    backgroundColor: isOptionsDisabled
-                    ? option == correctOption
-                        ? "#7be25b"
-                        : option == currentOptionSelected
-                        ? "#0F2E57" 
-                        : "#cfcdcc" 
-                    : "#fac782",
+                  backgroundColor: isOptionsDisabled
+                  ? option == currentOptionSelected
+                      ? "#0F2E57"
+                      : "#cfcdcc"
+                  : "#fac782",
                 },
                 ]}
             >
@@ -159,7 +150,6 @@ const QuizPage = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-    // scrollView: { backgroundColor: "#535A67" },
     scrollView: {backgroundColor:"#282c34"},
     container: {
         flex: 1,
@@ -200,7 +190,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         backgroundColor: "#ffffff",
         zIndex: 10,
-        // bottom: "500%"
     },
     btnNextText: {
         color: "#333",
