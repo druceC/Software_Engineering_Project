@@ -1,8 +1,8 @@
 # Software_Engineering_Project
 This is a group project for NYUAD Software_Engineering Course<br>
 By: Andy Ye, Junwoo Lee, Yumi Omori, and Andreana Druce Chua<br>
-<img src="https://github.com/druceC/Software_Engineering_Project/assets/89497828/0f7b6dc0-1cc5-4e2b-9931-4f8a885db60b" alt="logo" width="200">
 
+<img src="https://github.com/druceC/Software_Engineering_Project/assets/89497828/0f7b6dc0-1cc5-4e2b-9931-4f8a885db60b" alt="logo" width="200">
 # Introduction
 
 ## GoodNight 🌙
