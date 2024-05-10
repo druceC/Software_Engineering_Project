@@ -1,4 +1,4 @@
-export default data = [
+export default questionsData = [
     // Question 1
     {
         question: "How quickly does it take you to fall asleep",
@@ -36,11 +36,11 @@ export default data = [
     {
         question: "How satisfied/dissatisfied are you with your current sleep pattern?",
         options: [
-            "Very Satisfied",
+            "Very Satisfieds",
             "Satisfied",
             "Moderately Satisfied",
             "Dissatisfied",
-            "Very Dissastisfied"
+            "Very Dissatisfied"
         ]
     },
     // Question 5
@@ -51,7 +51,7 @@ export default data = [
             "A little",
             "Somewhat",
             "Much",
-            "Very Dissastisfied"
+            "Very Dissatisfied"
         ]
     },
     // Question 6
