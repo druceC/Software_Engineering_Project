@@ -1,30 +1,30 @@
 import React from "react";
 import { View, Animated, StyleSheet } from "react-native";
-import data from "./QuizData";
+import questionsData from "./QuizData";
 
 const ProgressBar = ({ progress }) => {
-  const allQuestions = data;
+    const allQuestions = questionsData;
 
-  const progressAnim = progress.interpolate({
-    inputRange: [0, allQuestions.length],
-    outputRange: ["0%", "100%"],
-  });
-  return (
-    <View style={styles.progressBarContainer}>
-      <Animated.View
-        style={[
-          {
-            height: 5,
-            borderRadius: 5,
-            backgroundColor: "#EDA276" + "90",
-          },
-          {
-            width: progressAnim,
-          },
-        ]}
-      ></Animated.View>
-    </View>
-  );
+    const progressAnim = progress.interpolate({
+        inputRange: [0, allQuestions.length],
+        outputRange: ["0%", "100%"],
+    });
+    return (
+        <View style={styles.progressBarContainer}>
+        <Animated.View
+            style={[
+            {
+                height: 5,
+                borderRadius: 5,
+                backgroundColor: "#EDA276" + "90",
+            },
+            {
+                width: progressAnim,
+            },
+            ]}
+        ></Animated.View>
+        </View>
+    );
 };
 
 const styles = StyleSheet.create({
