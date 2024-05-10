@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import data from "./QuizData";
+import questionsData from "./QuizData";
 
 // Test question counter display
 const Questions = ({ index, question }) => {
@@ -27,7 +27,7 @@ const Questions = ({ index, question }) => {
             color: "#333", 
             fontSize: 13, 
             opacity: 0.6 } }, 
-            `/ ${data.length}`)
+            `/ ${questionsData.length}`)
       ),
       // Actual question text
       React.createElement(Text, 
