@@ -1,6 +1,6 @@
 # Software_Engineering_Project
-This is a group project for NYUAD Software_Engineering Course
-By: Junwoo Lee, Andy Ye, Yumi Omori, and Andreana Druce Chua
+This is a group project for NYUAD Software_Engineering Course<br>
+(Junwoo Lee, Andy Ye, Yumi Omori, and Andreana Druce Chua)
 
 # Introduction
 
