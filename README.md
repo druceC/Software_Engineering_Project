@@ -1,10 +1,10 @@
-# Software_Engineering_Project
+## GoodNight 🌙
 <img src="https://github.com/druceC/Software_Engineering_Project/assets/89497828/0f7b6dc0-1cc5-4e2b-9931-4f8a885db60b" alt="logo" width="200">
 
 This is a group project for NYUAD Software_Engineering Course<br>
 By: Andy Ye, Junwoo Lee, Yumi Omori, and Andreana Druce Chua<br>
 
-## GoodNight 🌙
+## About
 Sleep is an essential activity of human life. Yet in today’s society, a good night’s sleep is often already deemed a luxury by many. In line, Good Night, is an application that aims to improve users’ quality of sleep. The system aims to provide an accessible, cost-effective alternative to traditional insomnia treatments.
 
 ## Scope
